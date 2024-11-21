@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
+import ru.artq.practice.kinopoisk.service.UserService;
 import ru.artq.practice.kinopoisk.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
@@ -22,7 +23,7 @@ class UserControllerTest {
 
     @BeforeEach
     void start() {
-        userController = new UserController(new InMemoryUserStorage());
+        userController = new UserController(new UserService(new InMemoryUserStorage()));
         user = User.builder()
                 .name("Art").email("ased@mail.ru").login("Arte")
                 .birthday(LocalDate.of(2012, 12, 12))

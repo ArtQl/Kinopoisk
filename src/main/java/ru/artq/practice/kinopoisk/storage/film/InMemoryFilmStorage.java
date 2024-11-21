@@ -61,6 +61,13 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.values();
     }
 
+    @Override
+    public Film getFilm(Integer id) {
+        Film film = films.getOrDefault(id, null);
+        if (film == null) throw new FilmNotExistException("Film doesn't exist");
+        return film;
+    }
+
     private void validation(Film film) {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895,12,28))) {
             log.debug("Date can't be before 28 dec 1895: {} date", film.getReleaseDate());

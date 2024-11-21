@@ -61,6 +61,13 @@ public class InMemoryUserStorage implements UserStorage {
         return users.values();
     }
 
+    @Override
+    public User getUser(Integer id) {
+        User user = users.getOrDefault(id, null);
+        if (user == null) throw new UserNotExistException("User not exist");
+        return user;
+    }
+
     private void validation(User user) {
         if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
