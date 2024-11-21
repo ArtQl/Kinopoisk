@@ -28,4 +28,5 @@ public class Film {
 
     @NotNull(message = "Duration cannot be null")
     private final Duration duration;
+    private Integer likes;
 }

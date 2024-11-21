@@ -10,6 +10,7 @@ import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
 import ru.artq.practice.kinopoisk.model.Film;
+import ru.artq.practice.kinopoisk.storage.film.InMemoryFilmStorage;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -26,7 +27,7 @@ class FilmControllerTest {
 
     @BeforeEach
     void start() {
-        filmController = new FilmController();
+        filmController = new FilmController(new InMemoryFilmStorage());
         film = Film.builder()
                 .name("a")
                 .description("aaaaaaaa10")
