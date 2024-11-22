@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmException;
 import ru.artq.practice.kinopoisk.model.Film;
@@ -42,8 +41,7 @@ public class FilmService {
     public boolean unlikeFilm(Integer filmId, Integer userId) {
         userStorage.getUser(userId);
         Film film = filmStorage.getFilm(filmId);
-        if (film.getLikes() == null ||
-                !film.getLikes().contains(userId))
+        if (film.getLikes() == null || !film.getLikes().contains(userId))
             throw new FilmException("User have yet to rate the movie");
         else
             film.getLikes().remove(userId);
@@ -52,7 +50,7 @@ public class FilmService {
 
     public List<Film> getPopularFilms(Integer count) {
         if (count == null || count <= 0 || count > filmStorage.getFilms().size())
-            throw new ValidationException("Error count value");
+            count = 10;
         if (filmStorage.getFilms() == null)
             throw new FilmNotExistException("Films not exist");
         return filmStorage.getFilms().stream()

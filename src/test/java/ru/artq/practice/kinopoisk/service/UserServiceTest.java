@@ -1,11 +1,10 @@
-package ru.artq.practice.kinopoisk.controller;
+package ru.artq.practice.kinopoisk.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.artq.practice.kinopoisk.exception.user.FriendsException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.service.UserService;
 import ru.artq.practice.kinopoisk.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;

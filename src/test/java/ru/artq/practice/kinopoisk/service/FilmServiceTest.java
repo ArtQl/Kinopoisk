@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.controller;
+package ru.artq.practice.kinopoisk.service;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -7,7 +7,6 @@ import ru.artq.practice.kinopoisk.exception.films.FilmException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.service.FilmService;
 import ru.artq.practice.kinopoisk.storage.film.InMemoryFilmStorage;
 import ru.artq.practice.kinopoisk.storage.user.InMemoryUserStorage;
 
@@ -48,6 +47,10 @@ public class FilmServiceTest {
 
     @Test
     void getPopularFilm() {
+        assertEquals(10, filmService.getPopularFilms(100).size());
+        assertEquals(10, filmService.getPopularFilms(null).size());
+        assertEquals(10, filmService.getPopularFilms(-19).size());
+
         filmService.likeFilm(1,1);
         filmService.likeFilm(1,2);
         filmService.likeFilm(1,3);
