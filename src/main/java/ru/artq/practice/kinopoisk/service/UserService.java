@@ -4,12 +4,12 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.user.FriendsException;
 import ru.artq.practice.kinopoisk.model.User;
 import ru.artq.practice.kinopoisk.storage.user.UserStorage;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,41 +25,50 @@ public class UserService {
     }
 
     public boolean addFriend(Integer userId, Integer friendId) {
-        validationId(userId, friendId);
         User user = userStorage.getUser(userId);
         User friend = userStorage.getUser(friendId);
-        if (!user.getFriends().add(friend.getId())
-                && !friend.getFriends().add(user.getId()))
+        if (user.getFriends() == null) {
+            user.setFriends(new HashSet<>());
+        }
+        if (friend.getFriends() == null) {
+            friend.setFriends(new HashSet<>());
+        }
+        if (user.getFriends().contains(userId) ||
+                friend.getFriends().contains(user.getId())) {
             throw new FriendsException("Users already friends");
+        } else {
+            user.getFriends().add(friend.getId());
+            friend.getFriends().add(user.getId());
+        }
         return true;
     }
 
     public boolean removeFriend(Integer userId, Integer friendId) {
-        validationId(userId, friendId);
         User user = userStorage.getUser(userId);
         User friend = userStorage.getUser(friendId);
-        if (!user.getFriends().remove(friend.getId())
-                && !friend.getFriends().remove(user.getId()))
+        if (user.getFriends() == null
+                || friend.getFriends() == null
+                || !user.getFriends().contains(friend.getId())
+                || !friend.getFriends().contains(user.getId()))
             throw new FriendsException("Users aren't friends");
-        return true;
+        return user.getFriends().remove(friend.getId()) && friend.getFriends().remove(user.getId());
     }
 
     public Collection<User> getListFriends(Integer userId) {
-        return userStorage.getUser(userId).getFriends().stream().map(userStorage::getUser).toList();
+        User user = userStorage.getUser(userId);
+        if (user.getFriends() == null)
+            throw new FriendsException("User has no friends");
+        return user.getFriends().stream().map(userStorage::getUser).toList();
     }
 
-    public Collection<User> getCommonFriends(Integer userId, Integer otherId) {
-        validationId(userId, otherId);
-        Set<Integer> userSet = userStorage.getUser(userId).getFriends();
-        Set<Integer> otherUserSet = userStorage.getUser(otherId).getFriends();
-        if (userSet == null || otherUserSet == null)
-            return List.of();
+    public List<User> getCommonFriends(Integer userId, Integer otherId) {
+        User user = userStorage.getUser(userId);
+        User otherUser = userStorage.getUser(otherId);
+        Set<Integer> userSet = user.getFriends() == null ? new HashSet<>() : new HashSet<>(user.getFriends());
+        Set<Integer> otherUserSet = otherUser.getFriends() == null ? new HashSet<>() : new HashSet<>(otherUser.getFriends());
+        if (userSet.isEmpty() || otherUserSet.isEmpty())
+            throw new FriendsException("Users has no common friends");
         userSet.retainAll(otherUserSet);
         return userSet.stream().map(userStorage::getUser).toList();
-    }
-
-    private void validationId(Integer userId, Integer friendId) {
-        if (userId == null || friendId == null || userId <= 0 || friendId <= 0)
-            throw new ValidationException("UserID or FriendID entered incorrectly");
     }
 }

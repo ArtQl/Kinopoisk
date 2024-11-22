@@ -5,12 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.exception.ValidationException;
-import ru.artq.practice.kinopoisk.exception.user.FilmException;
+import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
+import ru.artq.practice.kinopoisk.exception.films.FilmException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.storage.film.FilmStorage;
 import ru.artq.practice.kinopoisk.storage.user.UserStorage;
 
-import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 
 @Slf4j
@@ -29,24 +30,37 @@ public class FilmService {
     public boolean likeFilm(Integer filmId, Integer userId) {
         userStorage.getUser(userId);
         Film film = filmStorage.getFilm(filmId);
-        if(!film.getLikes().add(userId))
+        if (film.getLikes() == null)
+            film.setLikes(new HashSet<>());
+        if (film.getLikes().contains(userId))
             throw new FilmException("User has already rated the movie");
+        else
+            film.getLikes().add(userId);
         return true;
     }
 
     public boolean unlikeFilm(Integer filmId, Integer userId) {
         userStorage.getUser(userId);
         Film film = filmStorage.getFilm(filmId);
-        if(!film.getLikes().remove(userId))
+        if (film.getLikes() == null ||
+                !film.getLikes().contains(userId))
             throw new FilmException("User have yet to rate the movie");
+        else
+            film.getLikes().remove(userId);
         return true;
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        if (count <= 0)
-            throw new ValidationException("Count <= 0");
+        if (count == null || count <= 0 || count > filmStorage.getFilms().size())
+            throw new ValidationException("Error count value");
+        if (filmStorage.getFilms() == null)
+            throw new FilmNotExistException("Films not exist");
         return filmStorage.getFilms().stream()
-                .sorted(Comparator.comparingInt(f -> f.getLikes().size()))
+                .sorted((f1, f2) -> {
+                    int likes1 = f1.getLikes() == null ? 0 : f1.getLikes().size();
+                    int likes2 = f2.getLikes() == null ? 0 : f2.getLikes().size();
+                    return Integer.compare(likes2, likes1);
+                })
                 .limit(count).toList();
     }
 }
