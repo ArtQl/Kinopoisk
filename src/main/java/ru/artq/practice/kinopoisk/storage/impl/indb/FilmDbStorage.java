@@ -46,8 +46,8 @@ public class FilmDbStorage implements FilmStorage {
                 "RELEASE_DATE", Date.valueOf(film.getReleaseDate()),
                 "DURATION", film.getDuration().toMinutes()
         ));
-        log.info("Film {} added", film.getName());
         film.setId(id.intValue());
+        log.info("Film {} added", film);
         return film;
     }
 
@@ -83,11 +83,11 @@ public class FilmDbStorage implements FilmStorage {
         Film film = jdbcTemplate.queryForObject(
                 "SELECT * FROM FILMS WHERE FILMS.ID = ?",
                 (rs, rowNum) -> Film.builder()
-                        .id(rs.getInt("id"))
-                        .name(rs.getString("name"))
-                        .description(rs.getString("description"))
-                        .releaseDate(rs.getDate("release_date").toLocalDate())
-                        .duration(Duration.ofMinutes(rs.getInt("duration"))).build(),
+                        .id(rs.getInt("ID"))
+                        .name(rs.getString("NAME"))
+                        .description(rs.getString("DESCRIPTION"))
+                        .releaseDate(rs.getDate("RELEASE_DATE").toLocalDate())
+                        .duration(Duration.ofMinutes(rs.getInt("DURATION"))).build(),
                 id);
         if (film == null)
             throw new FilmNotExistException("Film with id: " + id + ", not found");
