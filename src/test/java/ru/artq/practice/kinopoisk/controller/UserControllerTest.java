@@ -3,31 +3,32 @@ package ru.artq.practice.kinopoisk.controller;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.service.UserService;
-import ru.artq.practice.kinopoisk.storage.user.InMemoryUserStorage;
 
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UserControllerTest {
+    @Autowired
     UserController userController;
-    User user;
+    User user = User.builder()
+            .name("Art").email("ased@mail.ru").login("Arte")
+            .birthday(LocalDate.of(2012, 12, 12))
+            .build();
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
 
-    @BeforeEach
+    @AfterEach
     void start() {
-        userController = new UserController(new UserService(new InMemoryUserStorage()));
-        user = User.builder()
-                .name("Art").email("ased@mail.ru").login("Arte")
-                .birthday(LocalDate.of(2012, 12, 12))
-                .build();
+        userController.getUsers().clear();
     }
 
     @Test
