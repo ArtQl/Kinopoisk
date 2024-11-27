@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Map;
+import java.util.Set;
 
 @Data
 @Builder
@@ -22,5 +24,6 @@ public class User {
     private final String login;
     @NotNull(message = "Birthday cannot be null")
     private final LocalDate birthday;
-
+    private Set<Integer> friends;
+    private Map<Integer, Boolean> statusFriends;
 }

@@ -6,20 +6,28 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.5</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.2.0</version>
+        <relativePath/>
     </parent>
     <groupId>ru.artq.practice</groupId>
     <artifactId>kinopoisk</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>kinopoisk</name>
     <description>kinopoisk</description>
-    <url/>
+    <url>https://github.com/ArtQl/kinopoisk</url>
     <licenses>
-        <license/>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
     </licenses>
     <developers>
-        <developer/>
+        <developer>
+            <id>ArtQ</id>
+            <name>Artem Kazakov</name>
+            <email>zrennex@mail.ru</email>
+        </developer>
     </developers>
     <scm>
         <connection/>
@@ -67,5 +75,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>

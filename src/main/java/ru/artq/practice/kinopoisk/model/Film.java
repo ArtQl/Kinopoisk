@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 @Builder
@@ -28,4 +29,7 @@ public class Film {
 
     @NotNull(message = "Duration cannot be null")
     private final Duration duration;
+    private Genre genre;
+    private MPA MPA;
+    private Set<Integer> likes;
 }
