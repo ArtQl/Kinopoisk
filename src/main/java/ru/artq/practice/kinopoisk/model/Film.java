@@ -26,10 +26,9 @@ public class Film {
     @NotNull(message = "Release date cannot be null")
     @Future(groups = LocalDate.class, message = "Release date cannot be in the future")
     private final LocalDate releaseDate;
-
     @NotNull(message = "Duration cannot be null")
     private final Duration duration;
-    private Genre genre;
-    private MPA MPA;
+    private Set<Genre> genre;
+    private Set<MPA> MPA;
     private Set<Integer> likes;
 }

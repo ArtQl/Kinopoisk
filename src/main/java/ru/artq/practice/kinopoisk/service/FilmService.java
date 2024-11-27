@@ -30,7 +30,7 @@ public class FilmService {
 
     public boolean likeFilm(Integer filmId, Integer userId) {
         userStorage.getUser(userId);
-        Film film = filmStorage.getFilm(filmId);
+        Film film = filmStorage.getFilmById(filmId);
         if (film.getLikes() == null)
             film.setLikes(new HashSet<>());
         if (film.getLikes().contains(userId))
@@ -42,7 +42,7 @@ public class FilmService {
 
     public boolean unlikeFilm(Integer filmId, Integer userId) {
         userStorage.getUser(userId);
-        Film film = filmStorage.getFilm(filmId);
+        Film film = filmStorage.getFilmById(filmId);
         if (film.getLikes() == null || !film.getLikes().contains(userId))
             throw new FilmException("User have yet to rate the movie");
         else

@@ -39,7 +39,7 @@ public class FilmServiceTest {
         assertThrows(UserNotExistException.class, () -> filmService.likeFilm(1, -1), "No User");
 
         filmService.unlikeFilm(1,1);
-        assertTrue(filmService.getFilmStorage().getFilm(1).getLikes().isEmpty());
+        assertTrue(filmService.getFilmStorage().getFilmById(1).getLikes().isEmpty());
         assertThrows(FilmException.class, () -> filmService.unlikeFilm(1,1), "no like");
         assertThrows(FilmNotExistException.class, () -> filmService.unlikeFilm(-1,1), "no Film");
         assertThrows(UserNotExistException.class, () -> filmService.unlikeFilm(1,-1), "no User");

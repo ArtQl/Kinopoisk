@@ -70,8 +70,8 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     private void validation(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
+        if (user.getUsername() == null || user.getUsername().isBlank()) {
+            user.setUsername(user.getLogin());
             log.debug("Username of {} - empty", user.getLogin());
         }
         if (user.getBirthday().isAfter(LocalDate.now())) {

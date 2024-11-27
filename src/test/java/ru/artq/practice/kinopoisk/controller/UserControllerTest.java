@@ -20,7 +20,7 @@ class UserControllerTest {
     @Autowired
     UserController userController;
     User user = User.builder()
-            .name("Art").email("ased@mail.ru").login("Arte")
+            .username("Art").email("ased@mail.ru").login("Arte")
             .birthday(LocalDate.of(2012, 12, 12))
             .build();
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -38,7 +38,7 @@ class UserControllerTest {
         assertEquals(3, validator.validate(User.builder().build()).size(), "Empty User");
 
         user = User.builder()
-                .name("Art").email("asedmail.ru").login("Arte")
+                .username("Art").email("asedmail.ru").login("Arte")
                 .birthday(LocalDate.of(2012, 12, 12))
                 .build();
         assertEquals(1, validator.validate(user).size(), "Wrong email");
@@ -48,7 +48,7 @@ class UserControllerTest {
                 .birthday(LocalDate.of(2012, 12, 12))
                 .build();
         assertEquals(0, validator.validate(userController.addUser(user)).size(), "No error");
-        assertEquals("Arte", (userController.getUsers().stream().toList().getLast()).getName(), "Change name");
+        assertEquals("Arte", (userController.getUsers().stream().toList().getLast()).getUsername(), "Change name");
     }
 
     @Test

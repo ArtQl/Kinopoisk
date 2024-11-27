@@ -6,5 +6,4 @@ public enum MPA {
     PG_13,
     R,
     NC_17
-
 }

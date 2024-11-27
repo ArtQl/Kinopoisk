@@ -63,7 +63,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilm(Integer id) {
+    public Film getFilmById(Integer id) {
         Film film = films.getOrDefault(id, null);
         if (film == null) throw new FilmNotExistException("Film doesn't exist");
         return film;
