@@ -7,8 +7,8 @@ import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.storage.film.InMemoryFilmStorage;
-import ru.artq.practice.kinopoisk.storage.user.InMemoryUserStorage;
+import ru.artq.practice.kinopoisk.storage.impl.inmemory.InMemoryFilmStorage;
+import ru.artq.practice.kinopoisk.storage.impl.inmemory.InMemoryUserStorage;
 
 import java.time.Duration;
 import java.time.LocalDate;

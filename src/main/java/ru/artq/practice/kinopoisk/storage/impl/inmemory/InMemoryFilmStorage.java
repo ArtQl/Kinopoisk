@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.film;
+package ru.artq.practice.kinopoisk.storage.impl.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -7,6 +7,7 @@ import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
 import ru.artq.practice.kinopoisk.model.Film;
+import ru.artq.practice.kinopoisk.storage.inter.FilmStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;

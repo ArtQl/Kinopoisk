@@ -3,12 +3,13 @@ package ru.artq.practice.kinopoisk.service;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.exception.films.FilmException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
-import ru.artq.practice.kinopoisk.storage.film.FilmStorage;
-import ru.artq.practice.kinopoisk.storage.user.UserStorage;
+import ru.artq.practice.kinopoisk.storage.inter.FilmStorage;
+import ru.artq.practice.kinopoisk.storage.inter.UserStorage;
 
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,8 @@ public class FilmService {
     UserStorage userStorage;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
+                       @Qualifier("userDbStorage") UserStorage userStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
     }

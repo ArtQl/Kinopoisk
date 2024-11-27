@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import ru.artq.practice.kinopoisk.exception.user.FriendsException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.storage.user.InMemoryUserStorage;
+import ru.artq.practice.kinopoisk.storage.impl.inmemory.InMemoryUserStorage;
 
 import java.time.LocalDate;
 

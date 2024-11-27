@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.film;
+package ru.artq.practice.kinopoisk.storage.inter;
 
 import ru.artq.practice.kinopoisk.model.Film;
 

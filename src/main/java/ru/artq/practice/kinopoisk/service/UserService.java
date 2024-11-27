@@ -3,10 +3,11 @@ package ru.artq.practice.kinopoisk.service;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.exception.user.FriendsException;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.storage.user.UserStorage;
+import ru.artq.practice.kinopoisk.storage.inter.UserStorage;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -20,7 +21,7 @@ public class UserService {
     private final UserStorage userStorage;
 
     @Autowired
-    public UserService(UserStorage userStorage) {
+    public UserService(@Qualifier("userDbStorage") UserStorage userStorage) {
         this.userStorage = userStorage;
     }
 

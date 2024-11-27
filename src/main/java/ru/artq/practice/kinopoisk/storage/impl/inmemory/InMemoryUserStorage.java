@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.user;
+package ru.artq.practice.kinopoisk.storage.impl.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -7,6 +7,7 @@ import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
+import ru.artq.practice.kinopoisk.storage.inter.UserStorage;
 
 import java.time.LocalDate;
 import java.util.Collection;
