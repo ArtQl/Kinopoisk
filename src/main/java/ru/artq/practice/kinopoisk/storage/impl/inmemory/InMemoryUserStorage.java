@@ -2,20 +2,19 @@ package ru.artq.practice.kinopoisk.storage.impl.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.storage.inter.UserStorage;
+import ru.artq.practice.kinopoisk.storage.impl.Validation;
+import ru.artq.practice.kinopoisk.storage.UserStorage;
 
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@Component
+@Component("inMemoryUserStorage")
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
     private Integer id = 0;
@@ -34,7 +33,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.debug("{} ID user already exist", user.getId());
             throw new InvalidUserIdException("ID user already exist");
         }
-        validation(user);
+        Validation.validateUser(user);
         user.setId(setId());
         users.put(user.getId(), user);
         log.info("User added: {}", user);
@@ -47,7 +46,7 @@ public class InMemoryUserStorage implements UserStorage {
             log.debug("{} ID User doesn't exist", user.getId());
             throw new InvalidUserIdException("ID User doesn't exist");
         }
-        validation(user);
+        Validation.validateUser(user);
         users.put(user.getId(), user);
         log.info("User updated: {}", user);
         return user;
@@ -67,16 +66,5 @@ public class InMemoryUserStorage implements UserStorage {
         User user = users.getOrDefault(id, null);
         if (user == null) throw new UserNotExistException("User not exist");
         return user;
-    }
-
-    private void validation(User user) {
-        if (user.getUsername() == null || user.getUsername().isBlank()) {
-            user.setUsername(user.getLogin());
-            log.debug("Username of {} - empty", user.getLogin());
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.debug("{}: Birthday can't be in the future", user.getBirthday());
-            throw new ValidationException("Birthday can't be in the future");
-        }
     }
 }

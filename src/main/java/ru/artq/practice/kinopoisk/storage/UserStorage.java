@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.inter;
+package ru.artq.practice.kinopoisk.storage;
 
 import ru.artq.practice.kinopoisk.model.User;
 

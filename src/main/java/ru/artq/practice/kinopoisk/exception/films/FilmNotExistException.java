@@ -4,4 +4,8 @@ public class FilmNotExistException extends RuntimeException {
     public FilmNotExistException(String message) {
         super(message);
     }
+
+    public FilmNotExistException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

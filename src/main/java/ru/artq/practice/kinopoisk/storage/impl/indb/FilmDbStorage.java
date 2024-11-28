@@ -2,22 +2,25 @@ package ru.artq.practice.kinopoisk.storage.impl.indb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
-import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
-import ru.artq.practice.kinopoisk.storage.inter.FilmStorage;
+import ru.artq.practice.kinopoisk.storage.impl.Validation;
+import ru.artq.practice.kinopoisk.storage.FilmStorage;
 
 import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.Duration;
-import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component("filmDbStorage")
@@ -35,11 +38,11 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        if (getFilms().contains(film) || film.getId() != null) {
+        if (doesFilmExistById(film.getId()) || film.getId() != null) {
             log.debug("Film: {}, ID: {} already exist", film.getName(), film.getId());
             throw new FilmAlreadyExistException("Film already exist");
         }
-        validation(film);
+        Validation.validateFilm(film);
         Number id = simpleJdbcInsert.executeAndReturnKey(Map.of(
                 "NAME", film.getName(),
                 "DESCRIPTION", film.getDescription(),
@@ -54,54 +57,58 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Film updateFilm(Film film) {
-        if (!getFilms().contains(film)) {
+        if (!doesFilmExistById(film.getId())) {
             log.debug("Film: {} doesn't exist", film.getId());
             throw new FilmNotExistException("ID Film doesn't exist");
         }
-        validation(film);
+        Validation.validateFilm(film);
         jdbcTemplate.update("UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ? WHERE ID = ?",
                 film.getName(),
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getDuration(),
                 film.getId());
-        log.info("Film {} updated", film.getName());
+        log.info("Film {} updated", film);
         return film;
     }
 
     @Override
     public Collection<Film> getFilms() {
-        List<Integer> films = jdbcTemplate.query(
-                "SELECT FILMS.ID FROM FILMS ORDER BY RELEASE_DATE DESC",
-                (rs, rowNum) -> rs.getInt("id"));
-        return films.isEmpty() ? Collections.emptyList()
-                : films.stream().map(this::getFilmById).toList();
+        return jdbcTemplate.query(
+                "SELECT * FROM FILMS ORDER BY RELEASE_DATE DESC",
+                new FilmRowMapper());
     }
 
     @Override
     public Film getFilmById(Integer id) {
-        Film film = jdbcTemplate.queryForObject(
-                "SELECT * FROM FILMS WHERE FILMS.ID = ?",
-                (rs, rowNum) -> Film.builder()
+        try {
+            return jdbcTemplate.queryForObject(
+                    "SELECT * FROM FILMS WHERE FILMS.ID = ?",
+                    new FilmRowMapper(), id);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new FilmNotExistException("Film with id: " + id + " not found", e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Error accessing the database for film with id: " + id, e);
+        }
+    }
+
+    private static class FilmRowMapper implements RowMapper<Film> {
+        @Override
+        public Film mapRow(ResultSet rs, int rowNum) {
+            try {
+                return Film.builder()
                         .id(rs.getInt("ID"))
                         .name(rs.getString("NAME"))
                         .description(rs.getString("DESCRIPTION"))
                         .releaseDate(rs.getDate("RELEASE_DATE").toLocalDate())
-                        .duration(Duration.ofMinutes(rs.getInt("DURATION"))).build(),
-                id);
-        if (film == null)
-            throw new FilmNotExistException("Film with id: " + id + ", not found");
-        return film;
+                        .duration(Duration.ofMinutes(rs.getInt("DURATION"))).build();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error mapping result set to Film object", e);
+            }
+        }
     }
 
-    private void validation(Film film) {
-        if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
-            log.debug("Date can't be before 28 dec 1895: {} date", film.getReleaseDate());
-            throw new ValidationException("Date can't be before 28 dec 1895");
-        }
-        if (film.getDuration().isZero() || film.getDuration().isNegative()) {
-            log.debug("Duration must be positive: {} duration", film.getDuration());
-            throw new ValidationException("Duration must be positive");
-        }
+    private boolean doesFilmExistById(Integer id) {
+        return Optional.ofNullable(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM FILMS WHERE ID = ?", Integer.class, id)).orElse(0) > 0;
     }
 }

@@ -8,8 +8,8 @@ import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.exception.films.FilmException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
-import ru.artq.practice.kinopoisk.storage.inter.FilmStorage;
-import ru.artq.practice.kinopoisk.storage.inter.UserStorage;
+import ru.artq.practice.kinopoisk.storage.FilmStorage;
+import ru.artq.practice.kinopoisk.storage.UserStorage;
 
 import java.util.HashSet;
 import java.util.List;

@@ -1,19 +1,23 @@
 package ru.artq.practice.kinopoisk.storage.impl.indb;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
-import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.user.UserAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.storage.inter.UserStorage;
+import ru.artq.practice.kinopoisk.storage.impl.Validation;
+import ru.artq.practice.kinopoisk.storage.UserStorage;
 
-import java.time.LocalDate;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component("userDbStorage")
@@ -30,11 +34,11 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User addUser(User user) {
-        if (getUsers().contains(user) || user.getId() != null) {
+        if (doesUserExistById(user.getId()) || user.getId() != null) {
             log.debug("{} already exist", user);
             throw new UserAlreadyExistException("User already exist");
         }
-        validation(user);
+        Validation.validateUser(user);
         Number id = simpleJdbcInsert.executeAndReturnKey(Map.of(
                 "EMAIL", user.getId(),
                 "LOGIN", user.getLogin(),
@@ -48,11 +52,11 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public User updateUser(User user) {
-        if (!getUsers().contains(user)) {
+        if (!doesUserExistById(user.getId())) {
             log.debug("{} ID User doesn't exist", user.getId());
             throw new UserNotExistException("ID User doesn't exist");
         }
-        validation(user);
+        Validation.validateUser(user);
         jdbcTemplate.update(
                 "UPDATE USERS SET EMAIL = ?, LOGIN = ?, USERNAME = ?, BIRTHDAY = ? WHERE ID = ?",
                 user.getEmail(),
@@ -67,41 +71,41 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getUsers() {
-        List<User> users = jdbcTemplate
-                .query("SELECT users.id FROM users", (rs, rowNum) -> rs.getInt("id"))
-                .stream()
-                .map(this::getUser)
-                .toList();
-        if (users.isEmpty()) {
-            log.debug("Users no added");
-            throw new UserNotExistException("Users no added");
-        }
-        return users;
+        return jdbcTemplate
+                .query("SELECT * FROM users ORDER BY ID", new UserRowMapper());
     }
 
     @Override
     public User getUser(Integer id) {
-        User user = jdbcTemplate.queryForObject(
-                "SELECT * FROM USERS WHERE ID = ?",
-                (rs, rowNum) -> User.builder()
+        try {
+            return jdbcTemplate.queryForObject(
+                    "SELECT * FROM USERS WHERE ID = ?",
+                    new UserRowMapper(),
+                    id);
+        } catch (IncorrectResultSizeDataAccessException e) {
+            throw new UserNotExistException("User with id: " + id + " not found", e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException("Error accessing the database for user with id: " + id, e);
+        }
+    }
+
+    private static class UserRowMapper implements RowMapper<User> {
+        @Override
+        public User mapRow(ResultSet rs, int rowNum) {
+            try {
+                return User.builder()
                         .email(rs.getString("EMAIL"))
                         .login(rs.getString("LOGIN"))
                         .username(rs.getString("USERNAME"))
                         .birthday(rs.getDate("BIRTHDAY").toLocalDate())
-                        .build(),
-                id);
-        if (user == null) throw new UserNotExistException("User not exist");
-        return user;
+                        .build();
+            } catch (SQLException e) {
+                throw new RuntimeException("Error mapping result set to User object", e);
+            }
+        }
     }
 
-    private void validation(User user) {
-        if (user.getUsername() == null || user.getUsername().isBlank()) {
-            user.setUsername(user.getLogin());
-            log.debug("Username of {} - empty", user.getLogin());
-        }
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            log.debug("{}: Birthday can't be in the future", user.getBirthday());
-            throw new ValidationException("Birthday can't be in the future");
-        }
+    private boolean doesUserExistById(Integer id) {
+        return Optional.ofNullable(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USERS WHERE ID = ?", Integer.class, id)).orElse(0) > 0;
     }
 }

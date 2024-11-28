@@ -24,5 +24,4 @@ public class User {
     @NotNull(message = "Birthday cannot be null")
     private final LocalDate birthday;
     private Set<Integer> likes;
-    private Set<Friendship> friends;
 }
