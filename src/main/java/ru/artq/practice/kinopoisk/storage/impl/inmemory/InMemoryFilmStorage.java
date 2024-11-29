@@ -12,6 +12,7 @@ import ru.artq.practice.kinopoisk.util.Validation;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component("inMemoryFilmStorage")
@@ -63,8 +64,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film getFilm(Integer id) {
-        Film film = films.getOrDefault(id, null);
-        if (film == null) throw new FilmNotExistException("Film doesn't exist");
-        return film;
+        return Optional.ofNullable(films.get(id))
+                .orElseThrow(() -> new FilmNotExistException("Film doesn't exist"));
     }
 }

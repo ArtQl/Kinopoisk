@@ -22,9 +22,9 @@ import java.util.Optional;
 @Slf4j
 @Component("inDbUserStorage")
 public class UserDbStorage implements UserStorage {
-    JdbcTemplate jdbcTemplate;
-    SimpleJdbcInsert simpleJdbcInsert;
-    RowMapper<User> rowMapper = (rs, rowNum) -> {
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert simpleJdbcInsert;
+    private final RowMapper<User> rowMapper = (rs, rowNum) -> {
         try {
             return User.builder()
                     .email(rs.getString("EMAIL"))
@@ -99,7 +99,9 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
-    private boolean doesUserExistById(Integer id) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM USERS WHERE ID = ?", Integer.class, id)).orElse(0) > 0;
+    private Boolean doesUserExistById(Integer id) {
+        return Optional.ofNullable(jdbcTemplate
+                .queryForObject("SELECT COUNT(*) FROM USERS WHERE ID = ?", Integer.class, id))
+                .orElse(0) > 0;
     }
 }

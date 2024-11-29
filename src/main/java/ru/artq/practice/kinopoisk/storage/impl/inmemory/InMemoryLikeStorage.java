@@ -8,7 +8,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component("inDbLikeStorage")
+@Component("inMemoryLikeStorage")
 public class InMemoryLikeStorage implements LikeStorage {
     Map<Integer, Set<Integer>> userLikes = new HashMap<>();
 

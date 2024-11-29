@@ -39,6 +39,7 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
             throw new IllegalArgumentException("No pending friend request found.");
         friendship.accept();
         log.info("{} ID and {} ID are now friends!", friendship.getUserId(), friendship.getFriendId());
+        return true;
     }
 
     @Override
@@ -48,6 +49,7 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
             throw new IllegalArgumentException("No pending friend request found.");
         friendship.reject();
         log.info("{} ID request to {} ID was rejected.", friendship.getUserId(), friendship.getFriendId());
+        return true;
     }
 
     @Override
@@ -66,7 +68,7 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
     }
 
     @Override
-    public Boolean<Integer> getCommonFriends(Integer userId, Integer otherUserId) {
+    public Collection<Integer> getCommonFriends(Integer userId, Integer otherUserId) {
         Set<Integer> userSet = getFriendshipsById(userId).stream()
                 .map(f -> f.getUserId().equals(userId)
                         ? f.getFriendId() : f.getUserId())

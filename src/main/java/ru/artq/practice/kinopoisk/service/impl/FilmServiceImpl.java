@@ -18,7 +18,7 @@ public class FilmServiceImpl implements FilmService {
     FilmStorage filmStorage;
 
     @Autowired
-    public FilmServiceImpl(@Qualifier("filmDbStorage") FilmStorage filmStorage) {
+    public FilmServiceImpl(@Qualifier("inDbFilmStorage") FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
     }
 

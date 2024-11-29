@@ -18,8 +18,8 @@ public class FriendshipServiceImpl implements FriendshipService {
     private final FriendshipStorage friendshipStorage;
 
     @Autowired
-    public FriendshipServiceImpl(@Qualifier("inMemoryUserStorage") UserStorage userStorage,
-                           @Qualifier("inMemoryFriendshipStorage") FriendshipStorage friendshipStorage) {
+    public FriendshipServiceImpl(@Qualifier("inDbUserStorage") UserStorage userStorage,
+                                 @Qualifier("inDbFriendshipStorage") FriendshipStorage friendshipStorage) {
         this.userStorage = userStorage;
         this.friendshipStorage = friendshipStorage;
     }
@@ -56,7 +56,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     @Override
     public Collection<User> getCommonFriends(Integer userId, Integer otherId) {
         validateUsers(userId, otherId);
-        List<Integer> res = friendshipStorage.getCommonFriends(userId, otherId);
+        Collection<Integer> res = friendshipStorage.getCommonFriends(userId, otherId);
         if (res.isEmpty()) return List.of();
         return res.stream().map(userStorage::getUser).toList();
     }

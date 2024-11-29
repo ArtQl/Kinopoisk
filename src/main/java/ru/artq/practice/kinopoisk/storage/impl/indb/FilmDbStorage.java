@@ -51,7 +51,6 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-
     @Override
     public Film updateFilm(Film film) {
         if (!doesFilmExistById(film.getId())) {
@@ -59,11 +58,10 @@ public class FilmDbStorage implements FilmStorage {
             throw new FilmNotExistException("ID Film doesn't exist");
         }
         Validation.validateFilm(film);
-        jdbcTemplate.update("UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ? WHERE ID = ?",
-                film.getName(),
-                film.getDescription(),
-                film.getReleaseDate(),
-                film.getDuration(),
+        String sql = "UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ? WHERE ID = ?";
+        jdbcTemplate.update(sql,
+                film.getName(), film.getDescription(),
+                film.getReleaseDate(), film.getDuration(),
                 film.getId());
         log.info("Film {} updated", film);
         return film;
@@ -90,6 +88,8 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private boolean doesFilmExistById(Integer id) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject("SELECT COUNT(*) FROM FILMS WHERE ID = ?", Integer.class, id)).orElse(0) > 0;
+        return Optional.ofNullable(jdbcTemplate
+                        .queryForObject("SELECT COUNT(*) FROM FILMS WHERE ID = ?", Integer.class, id))
+                .orElse(0) > 0;
     }
 }

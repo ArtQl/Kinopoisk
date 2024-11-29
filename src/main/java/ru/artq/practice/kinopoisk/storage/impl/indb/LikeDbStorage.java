@@ -7,15 +7,12 @@ import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.films.LikeFilmException;
 import ru.artq.practice.kinopoisk.storage.LikeStorage;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Component("inDbLikeStorage")
 public class LikeDbStorage implements LikeStorage {
-    JdbcTemplate jdbcTemplate;
-    RowMapper<Integer> rowMapperToInt = (rs, rowNum) -> rs.getInt("FILM_ID");
+    private final JdbcTemplate jdbcTemplate;
+    private final RowMapper<Integer> rowMapper = (rs, rowNum) -> rs.getInt("FILM_ID");
 
     @Autowired
     public LikeDbStorage(JdbcTemplate jdbcTemplate) {
@@ -23,10 +20,10 @@ public class LikeDbStorage implements LikeStorage {
     }
 
     @Override
-    public Set<Integer> getUserLikes(Integer userId) {
+    public Collection<Integer> getUserLikes(Integer userId) {
         String sql = "SELECT * FROM LIKES WHERE USER_ID = ?";
-        List<Integer> res = jdbcTemplate.query(sql, rowMapperToInt, userId);
-        return res.isEmpty() ? Set.of() : new HashSet<>(res);
+        List<Integer> res = jdbcTemplate.query(sql, rowMapper, userId);
+        return res.isEmpty() ? Collections.emptyList() : res;
     }
 
     @Override
@@ -46,15 +43,9 @@ public class LikeDbStorage implements LikeStorage {
     }
 
     @Override
-    public List<Integer> getPopularFilms(Integer count) {
-        String sql = """
-                SELECT FILMS.*, COUNT(USER_ID) rate
-                FROM LIKES
-                JOIN FILMS ON LIKES.FILM_ID = FILMS.ID
-                GROUP BY FILM_ID ORDER BY rate DESC LIMIT ?
-                """;
-//        return jdbcTemplate.query(sql, new FilmRowMapper(), count);
-        return List.of();
+    public Collection<Integer> getPopularFilms(Integer count) {
+        String sql = "SELECT FILM_ID FROM LIKES GROUP BY FILM_ID ORDER BY COUNT(USER_ID) DESC LIMIT ?";
+        return jdbcTemplate.query(sql, rowMapper, count);
     }
 
     private Boolean doesLikeExist(Integer filmId, Integer userId) {
