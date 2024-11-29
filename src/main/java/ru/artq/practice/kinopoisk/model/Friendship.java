@@ -20,6 +20,12 @@ public class Friendship {
         this.friendId = friendId;
     }
 
+    public Friendship(Integer userId, Integer friendId, FriendshipStatus status) {
+        this.userId = userId;
+        this.friendId = friendId;
+        this.status = status;
+    }
+
     public void accept() {
         this.status = FriendshipStatus.ACCEPTED;
     }

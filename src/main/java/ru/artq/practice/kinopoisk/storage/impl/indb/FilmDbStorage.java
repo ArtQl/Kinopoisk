@@ -5,25 +5,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
-import ru.artq.practice.kinopoisk.storage.impl.Validation;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
+import ru.artq.practice.kinopoisk.storage.impl.indb.rowmapper.FilmRowMapper;
+import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.sql.Date;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@Component("filmDbStorage")
+@Component("inDbFilmStorage")
 public class FilmDbStorage implements FilmStorage {
     JdbcTemplate jdbcTemplate;
     SimpleJdbcInsert simpleJdbcInsert;
@@ -80,31 +77,15 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmById(Integer id) {
+    public Film getFilm(Integer id) {
         try {
             return jdbcTemplate.queryForObject(
-                    "SELECT * FROM FILMS WHERE FILMS.ID = ?",
+                    "SELECT * FROM FILMS WHERE ID = ?",
                     new FilmRowMapper(), id);
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new FilmNotExistException("Film with id: " + id + " not found", e);
         } catch (DataAccessException e) {
             throw new RuntimeException("Error accessing the database for film with id: " + id, e);
-        }
-    }
-
-    private static class FilmRowMapper implements RowMapper<Film> {
-        @Override
-        public Film mapRow(ResultSet rs, int rowNum) {
-            try {
-                return Film.builder()
-                        .id(rs.getInt("ID"))
-                        .name(rs.getString("NAME"))
-                        .description(rs.getString("DESCRIPTION"))
-                        .releaseDate(rs.getDate("RELEASE_DATE").toLocalDate())
-                        .duration(Duration.ofMinutes(rs.getInt("DURATION"))).build();
-            } catch (SQLException e) {
-                throw new RuntimeException("Error mapping result set to Film object", e);
-            }
         }
     }
 

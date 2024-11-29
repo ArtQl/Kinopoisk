@@ -4,52 +4,52 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.artq.practice.kinopoisk.model.Film;
-import ru.artq.practice.kinopoisk.service.FilmService;
+import ru.artq.practice.kinopoisk.service.impl.FilmServiceImpl;
 
 import java.util.Collection;
 
 @RestController
 @RequestMapping("/films")
 public class FilmController {
-    private final FilmService filmService;
+    private final FilmServiceImpl filmServiceImpl;
 
     @Autowired
-    public FilmController(FilmService filmService) {
-        this.filmService = filmService;
+    public FilmController(FilmServiceImpl filmServiceImpl) {
+        this.filmServiceImpl = filmServiceImpl;
     }
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {
-        return filmService.getFilmStorage().addFilm(film);
+        return filmServiceImpl.getFilmStorage().addFilm(film);
     }
 
     @PutMapping
     public Film updateFilm(@Valid @RequestBody Film film) {
-        return filmService.getFilmStorage().updateFilm(film);
+        return filmServiceImpl.getFilmStorage().updateFilm(film);
     }
 
     @GetMapping
     public Collection<Film> getFilms() {
-        return filmService.getFilmStorage().getFilms();
+        return filmServiceImpl.getFilmStorage().getFilms();
     }
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable Integer id) {
-        return filmService.getFilmStorage().getFilmById(id);
+        return filmServiceImpl.getFilmStorage().getFilm(id);
     }
 
-    @PutMapping("/{id}/like/{userId}")
-    public boolean likeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
-        return filmService.likeFilm(id, userId);
-    }
-
-    @DeleteMapping("/{id}/like/{userId}")
-    public boolean unlikeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
-        return filmService.unlikeFilm(id, userId);
-    }
-
-    @GetMapping("/popular")
-    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
-        return filmService.getPopularFilms(count);
-    }
+//    @PutMapping("/{id}/like/{userId}")
+//    public boolean likeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
+//        return filmServiceImpl.likeFilm(id, userId);
+//    }
+//
+//    @DeleteMapping("/{id}/like/{userId}")
+//    public boolean unlikeFilm(@PathVariable Integer id, @PathVariable Integer userId) {
+//        return filmServiceImpl.unlikeFilm(id, userId);
+//    }
+//
+//    @GetMapping("/popular")
+//    public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
+//        return filmServiceImpl.getPopularFilms(count);
+//    }
 }

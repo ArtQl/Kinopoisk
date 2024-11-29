@@ -6,8 +6,8 @@ import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
 import ru.artq.practice.kinopoisk.model.Film;
-import ru.artq.practice.kinopoisk.storage.impl.Validation;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
+import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -62,7 +62,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film getFilmById(Integer id) {
+    public Film getFilm(Integer id) {
         Film film = films.getOrDefault(id, null);
         if (film == null) throw new FilmNotExistException("Film doesn't exist");
         return film;

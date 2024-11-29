@@ -6,12 +6,13 @@ import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.storage.impl.Validation;
 import ru.artq.practice.kinopoisk.storage.UserStorage;
+import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Component("inMemoryUserStorage")
@@ -63,8 +64,6 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUser(Integer id) {
-        User user = users.getOrDefault(id, null);
-        if (user == null) throw new UserNotExistException("User not exist");
-        return user;
+        return Optional.ofNullable(users.get(id)).orElseThrow(() -> new UserNotExistException("User not exist"));
     }
 }
