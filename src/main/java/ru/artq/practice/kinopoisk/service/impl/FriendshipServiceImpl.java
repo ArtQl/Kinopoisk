@@ -1,7 +1,8 @@
 package ru.artq.practice.kinopoisk.service.impl;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Friendship;
 import ru.artq.practice.kinopoisk.model.User;
@@ -13,16 +14,11 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Getter
 public class FriendshipServiceImpl implements FriendshipService {
     private final UserStorage userStorage;
     private final FriendshipStorage friendshipStorage;
-
-    @Autowired
-    public FriendshipServiceImpl(@Qualifier("inDbUserStorage") UserStorage userStorage,
-                                 @Qualifier("inDbFriendshipStorage") FriendshipStorage friendshipStorage) {
-        this.userStorage = userStorage;
-        this.friendshipStorage = friendshipStorage;
-    }
 
     @Override
     public Boolean sendFriendRequest(Integer userId, Integer friendId) {
@@ -59,6 +55,11 @@ public class FriendshipServiceImpl implements FriendshipService {
         Collection<Integer> res = friendshipStorage.getCommonFriends(userId, otherId);
         if (res.isEmpty()) return List.of();
         return res.stream().map(userStorage::getUser).toList();
+    }
+
+    @Override
+    public void clearFriends() {
+        friendshipStorage.clear();
     }
 
     private void validateUsers(Integer userId, Integer friendId) {

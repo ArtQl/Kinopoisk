@@ -17,4 +17,6 @@ public interface FriendshipStorage {
     Collection<Integer> getCommonFriends(Integer userId, Integer otherUserId);
 
     Friendship findFriendship(int userId, int friendId);
+
+    void clear();
 }

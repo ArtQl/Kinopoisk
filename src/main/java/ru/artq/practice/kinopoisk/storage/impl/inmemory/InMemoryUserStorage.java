@@ -1,13 +1,13 @@
 package ru.artq.practice.kinopoisk.storage.impl.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
 import ru.artq.practice.kinopoisk.storage.UserStorage;
-import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,12 +15,14 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@Component("inMemoryUserStorage")
+@Component
+@Profile("in-memory")
 public class InMemoryUserStorage implements UserStorage {
     private final Map<Integer, User> users = new HashMap<>();
     private Integer id = 0;
 
     private Integer setId() {
+        if (users.isEmpty()) id = 0;
         return ++id;
     }
 
@@ -34,7 +36,6 @@ public class InMemoryUserStorage implements UserStorage {
             log.debug("{} ID user already exist", user.getId());
             throw new InvalidUserIdException("ID user already exist");
         }
-        Validation.validateUser(user);
         user.setId(setId());
         users.put(user.getId(), user);
         log.info("User added: {}", user);
@@ -47,7 +48,6 @@ public class InMemoryUserStorage implements UserStorage {
             log.debug("{} ID User doesn't exist", user.getId());
             throw new InvalidUserIdException("ID User doesn't exist");
         }
-        Validation.validateUser(user);
         users.put(user.getId(), user);
         log.info("User updated: {}", user);
         return user;
@@ -64,6 +64,11 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User getUser(Integer id) {
-        return Optional.ofNullable(users.get(id)).orElseThrow(() -> new UserNotExistException("User not exist"));
+        return Optional.ofNullable(users.get(id)).orElseThrow(() -> new UserNotExistException("User with id: " + id + " not found"));
+    }
+
+    @Override
+    public void clearUsers() {
+        users.clear();
     }
 }

@@ -1,7 +1,7 @@
 package ru.artq.practice.kinopoisk.service.impl;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Genre;
 import ru.artq.practice.kinopoisk.service.GenreFilmService;
@@ -11,17 +11,10 @@ import ru.artq.practice.kinopoisk.storage.GenreFilmStorage;
 import java.util.Collection;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class GenreFilmServiceImpl implements GenreFilmService {
-    GenreFilmStorage genreFilmStorage;
-    FilmStorage filmStorage;
-
-    @Autowired
-    public GenreFilmServiceImpl(
-            @Qualifier("inDbGenreFilmStorage") GenreFilmStorage genreFilmStorage,
-            @Qualifier("inDbFilmStorage") FilmStorage filmStorage) {
-        this.genreFilmStorage = genreFilmStorage;
-        this.filmStorage = filmStorage;
-    }
+    private final GenreFilmStorage genreFilmStorage;
+    private final FilmStorage filmStorage;
 
     @Override
     public Collection<String> getAllGenreFilm(Integer filmId) {

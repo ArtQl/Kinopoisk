@@ -1,7 +1,8 @@
 package ru.artq.practice.kinopoisk.service.impl;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
@@ -13,19 +14,12 @@ import ru.artq.practice.kinopoisk.storage.UserStorage;
 import java.util.Collection;
 
 @Service
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Getter
 public class LikeFilmServiceImpl implements LikeFilmService {
-    LikeStorage likeStorage;
-    UserStorage userStorage;
-    FilmStorage filmStorage;
-
-    @Autowired
-    public LikeFilmServiceImpl(@Qualifier("inDbLikeStorage") LikeStorage likeStorage,
-                               @Qualifier("inDbUserStorage") UserStorage userStorage,
-                               @Qualifier("inDbFilmStorage") FilmStorage filmStorage) {
-        this.likeStorage = likeStorage;
-        this.userStorage = userStorage;
-        this.filmStorage = filmStorage;
-    }
+    private final LikeStorage likeStorage;
+    private final UserStorage userStorage;
+    private final FilmStorage filmStorage;
 
     @Override
     public Boolean likeFilm(Integer userId, Integer filmId) {
@@ -55,5 +49,11 @@ public class LikeFilmServiceImpl implements LikeFilmService {
     public Collection<Integer> getUserLikes(Integer userId) {
         userStorage.getUser(userId);
         return likeStorage.getUserLikes(userId);
+    }
+
+    @Override
+    public Collection<Integer> getFilmLikes(Integer filmId) {
+        filmStorage.getFilm(filmId);
+        return likeStorage.getFilmLikes(filmId);
     }
 }

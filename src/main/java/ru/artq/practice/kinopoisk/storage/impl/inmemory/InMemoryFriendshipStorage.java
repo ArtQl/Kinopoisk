@@ -1,6 +1,7 @@
 package ru.artq.practice.kinopoisk.storage.impl.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.user.FriendshipException;
 import ru.artq.practice.kinopoisk.model.Friendship;
@@ -11,7 +12,8 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Component("inMemoryFriendshipStorage")
+@Component
+@Profile("in-memory")
 public class InMemoryFriendshipStorage implements FriendshipStorage {
     private final Map<Integer, Set<Friendship>> friendships = new HashMap<>();
 
@@ -65,6 +67,11 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
                 .stream()
                 .filter(f -> f.getFriendId().equals(friendId))
                 .findFirst().orElseThrow(() -> new FriendshipException("Friendship not found"));
+    }
+
+    @Override
+    public void clear() {
+        friendships.clear();
     }
 
     @Override

@@ -2,6 +2,7 @@ package ru.artq.practice.kinopoisk.storage.impl.indb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -11,10 +12,12 @@ import ru.artq.practice.kinopoisk.model.FriendshipStatus;
 import ru.artq.practice.kinopoisk.storage.FriendshipStorage;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Component("inDbFriendshipStorage")
+@Component
+@Profile("db")
 public class FriendshipDbStorage implements FriendshipStorage {
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Friendship> rowMapper = ((rs, rowNum) -> new Friendship(
@@ -31,10 +34,11 @@ public class FriendshipDbStorage implements FriendshipStorage {
     @Override
     public Boolean sendFriendRequest(Integer userId, Integer friendId) {
         if (existsFriendship(userId, friendId) || existsFriendship(friendId, userId)) {
-            throw new FriendshipException("Friend request already exists or users are already friends.");
+            log.info("Friend request already exists or users are already friends.");
+            return false;
         }
         String sql = "INSERT INTO FRIENDS (USER_ID, FRIEND_ID, STATUS) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, userId, friendId, FriendshipStatus.PENDING);
+        jdbcTemplate.update(sql, userId, friendId, FriendshipStatus.PENDING.name());
         log.info("Friend request sent from {} to {}", userId, friendId);
         return true;
     }
@@ -42,7 +46,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
     @Override
     public Boolean acceptFriendRequest(int userId, int friendId) {
         String sql = "UPDATE FRIENDS SET STATUS = ? WHERE USER_ID = ? AND FRIEND_ID = ?";
-        int rowsUpdated = jdbcTemplate.update(sql, FriendshipStatus.ACCEPTED, userId, friendId);
+        int rowsUpdated = jdbcTemplate.update(sql, FriendshipStatus.ACCEPTED.name(), userId, friendId);
         if (rowsUpdated == 0)
             throw new FriendshipException("No pending friend request found.");
         log.info("{} ID and {} ID are now friends!", userId, friendId);
@@ -52,7 +56,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
     @Override
     public Boolean rejectFriendRequest(int userId, int friendId) {
         String sql = "UPDATE FRIENDS SET STATUS = ? WHERE USER_ID = ? AND FRIEND_ID = ?";
-        int rowsDeleted = jdbcTemplate.update(sql, FriendshipStatus.REJECTED, userId, friendId);
+        int rowsDeleted = jdbcTemplate.update(sql, FriendshipStatus.REJECTED.name(), userId, friendId);
         if (rowsDeleted == 0)
             throw new FriendshipException("No pending friend request found.");
         log.info("{} ID request to {} ID was rejected.", userId, friendId);
@@ -62,15 +66,20 @@ public class FriendshipDbStorage implements FriendshipStorage {
     @Override
     public Collection<Friendship> getFriendshipsById(Integer userId) {
         String sql = "SELECT * FROM FRIENDS WHERE (USER_ID = ? or FRIEND_ID = ?) AND STATUS = ?";
-        return jdbcTemplate.query(sql, rowMapper, FriendshipStatus.ACCEPTED, userId, userId);
+        return jdbcTemplate.query(sql, rowMapper, userId, userId, FriendshipStatus.ACCEPTED.name());
     }
 
     @Override
     public Friendship findFriendship(int userId, int friendId) {
-        String sql = "SELECT * FROM FRIENDS WHERE (USER_ID = ? AND FRIEND_ID = ?) OR (USER_ID = ? AND FRIEND_ID = ?)";
-        return Optional.ofNullable(jdbcTemplate
-                .queryForObject(sql, rowMapper, userId, friendId, friendId, userId))
-                .orElseThrow(() -> new FriendshipException("Friendship not found"));
+        String sql = "SELECT * FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?";
+        List<Friendship> f = jdbcTemplate.query(sql, rowMapper, userId, friendId);
+        if (f.isEmpty()) throw new FriendshipException("Friendship not found");
+        return f.getFirst();
+    }
+
+    @Override
+    public void clear() {
+        jdbcTemplate.execute("DELETE FROM FRIENDS");
     }
 
     @Override
@@ -82,7 +91,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
                 AND f1.status = ? AND f2.status = ?
                 """;
         return jdbcTemplate.queryForList(sql, Integer.class,
-                userId, otherUserId, FriendshipStatus.ACCEPTED, FriendshipStatus.ACCEPTED);
+                userId, otherUserId, FriendshipStatus.ACCEPTED.name(), FriendshipStatus.ACCEPTED.name());
     }
 
     private Boolean existsFriendship(Integer userID, Integer friendId) {

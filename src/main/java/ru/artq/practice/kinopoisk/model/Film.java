@@ -28,7 +28,4 @@ public class Film {
     private final LocalDate releaseDate;
     @NotNull(message = "Duration cannot be null")
     private final Duration duration;
-    private Set<Genre> genre;
-    private Set<MPA> MPA;
-    private Set<Integer> likes;
 }

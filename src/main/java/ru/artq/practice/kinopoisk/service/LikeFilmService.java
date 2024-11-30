@@ -12,4 +12,7 @@ public interface LikeFilmService {
     Collection<Film> getPopularFilms(Integer count);
 
     Collection<Integer> getUserLikes(Integer userId);
+
+    Collection<Integer> getFilmLikes(Integer filmId);
+
 }

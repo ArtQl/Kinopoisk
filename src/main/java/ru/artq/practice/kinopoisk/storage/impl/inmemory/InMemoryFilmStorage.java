@@ -1,13 +1,13 @@
 package ru.artq.practice.kinopoisk.storage.impl.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
-import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,7 +15,8 @@ import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
-@Component("inMemoryFilmStorage")
+@Component
+@Profile("in-memory")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
     private Integer id = 0;
@@ -34,7 +35,6 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.debug("ID Film: {} already exist", film.getId());
             throw new InvalidFilmIdException("ID Film already exist");
         }
-        Validation.validateFilm(film);
         film.setId(setId());
         films.put(film.getId(), film);
         log.info("Film {} added", film.getName());
@@ -47,7 +47,6 @@ public class InMemoryFilmStorage implements FilmStorage {
             log.debug("ID Film: {} doesn't exist", film.getId());
             throw new InvalidFilmIdException("ID Film doesn't exist");
         }
-        Validation.validateFilm(film);
         films.put(film.getId(), film);
         log.info("Film {} updated", film.getName());
         return film;
@@ -66,5 +65,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilm(Integer id) {
         return Optional.ofNullable(films.get(id))
                 .orElseThrow(() -> new FilmNotExistException("Film doesn't exist"));
+    }
+
+    @Override
+    public void clearFilms() {
+        films.clear();
     }
 }

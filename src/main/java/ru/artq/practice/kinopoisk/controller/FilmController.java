@@ -5,7 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.service.FilmService;
+import ru.artq.practice.kinopoisk.service.GenreFilmService;
 import ru.artq.practice.kinopoisk.service.LikeFilmService;
+import ru.artq.practice.kinopoisk.service.MPAFilmService;
 
 import java.util.Collection;
 
@@ -14,11 +16,20 @@ import java.util.Collection;
 public class FilmController {
     private final FilmService filmService;
     private final LikeFilmService likeFilmService;
+    private final GenreFilmService genreFilmService;
+    private final MPAFilmService mpaFilmService;
 
     @Autowired
-    public FilmController(FilmService filmService, LikeFilmService likeFilmService) {
+    public FilmController(
+            FilmService filmService,
+            LikeFilmService likeFilmService,
+            GenreFilmService genreFilmService,
+            MPAFilmService mpaFilmService
+    ) {
         this.filmService = filmService;
         this.likeFilmService = likeFilmService;
+        this.genreFilmService = genreFilmService;
+        this.mpaFilmService = mpaFilmService;
     }
 
     @PostMapping
@@ -56,6 +67,33 @@ public class FilmController {
         return likeFilmService.getPopularFilms(count);
     }
 
+    @GetMapping("/genres/{id}")
+    public Collection<String> getAllGenreFilm(@PathVariable Integer id) {
+        return genreFilmService.getAllGenreFilm(id);
+    }
 
+    @PutMapping("/genres/{id}/{genre}")
+    public Boolean addGenreToFilm(@PathVariable Integer id, @PathVariable String genre) {
+        return genreFilmService.addGenreToFilm(id, genre);
+    }
 
+    @DeleteMapping("/genres/{id}/{genre}")
+    public Boolean removeGenreFromFilm(@PathVariable Integer id, @PathVariable String genre){
+        return genreFilmService.removeGenreFromFilm(id, genre);
+    }
+
+    @GetMapping("/mpa/{id}")
+    public Collection<String> getAllMpaFilm(@PathVariable Integer id) {
+        return mpaFilmService.getAllMPAFilm(id);
+    }
+
+    @PutMapping("/mpa/{id}/{type}")
+    public Boolean addMpaToFilm(@PathVariable Integer id, @PathVariable String type) {
+        return mpaFilmService.addMPAToFilm(id, type);
+    }
+
+    @DeleteMapping("/mpa/{id}/{type}")
+    public Boolean removeMpaFromFilm(@PathVariable Integer id, @PathVariable String type){
+        return mpaFilmService.removeMPAFromFilm(id, type);
+    }
 }

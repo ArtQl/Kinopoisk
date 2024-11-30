@@ -1,6 +1,7 @@
 package ru.artq.practice.kinopoisk.storage.impl.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.model.MPA;
 import ru.artq.practice.kinopoisk.storage.MPAFilmStorage;
@@ -8,7 +9,8 @@ import ru.artq.practice.kinopoisk.storage.MPAFilmStorage;
 import java.util.*;
 
 @Slf4j
-@Component("inMemoryMPAFilmStorage")
+@Component
+@Profile("in-memory")
 public class InMemoryMPAFilmStorage implements MPAFilmStorage {
     private final Map<Integer, Set<MPA>> mpaFilm = new HashMap<>();
 

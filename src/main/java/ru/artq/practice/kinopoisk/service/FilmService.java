@@ -12,4 +12,6 @@ public interface FilmService {
     Collection<Film> getFilms();
 
     Film getFilmById(Integer id);
+
+    void clearFilms();
 }

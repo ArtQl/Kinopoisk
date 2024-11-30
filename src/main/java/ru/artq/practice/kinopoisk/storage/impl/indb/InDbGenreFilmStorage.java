@@ -2,6 +2,7 @@ package ru.artq.practice.kinopoisk.storage.impl.indb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -9,10 +10,12 @@ import ru.artq.practice.kinopoisk.exception.GenreNotFoundException;
 import ru.artq.practice.kinopoisk.model.Genre;
 import ru.artq.practice.kinopoisk.storage.GenreFilmStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Optional;
 
 @Slf4j
-@Component("inDbGenreFilmStorage")
+@Component
+@Profile("db")
 public class InDbGenreFilmStorage implements GenreFilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private static final RowMapper<Genre> ROW_MAPPER = (rs, rowNum) -> Genre.valueOf(rs.getString("TITLE"));

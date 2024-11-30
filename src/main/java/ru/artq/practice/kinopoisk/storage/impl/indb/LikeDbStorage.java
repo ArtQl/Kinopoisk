@@ -1,15 +1,20 @@
 package ru.artq.practice.kinopoisk.storage.impl.indb;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.films.LikeFilmException;
 import ru.artq.practice.kinopoisk.storage.LikeStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
-@Component("inDbLikeStorage")
+@Component
+@Profile("db")
 public class LikeDbStorage implements LikeStorage {
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Integer> rowMapper = (rs, rowNum) -> rs.getInt("FILM_ID");
@@ -46,6 +51,12 @@ public class LikeDbStorage implements LikeStorage {
     public Collection<Integer> getPopularFilms(Integer count) {
         String sql = "SELECT FILM_ID FROM LIKES GROUP BY FILM_ID ORDER BY COUNT(USER_ID) DESC LIMIT ?";
         return jdbcTemplate.query(sql, rowMapper, count);
+    }
+
+    @Override
+    public Collection<Integer> getFilmLikes(Integer filmId) {
+        //todo
+        return List.of();
     }
 
     private Boolean doesLikeExist(Integer filmId, Integer userId) {

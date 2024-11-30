@@ -1,5 +1,6 @@
 package ru.artq.practice.kinopoisk.storage.impl.inmemory;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.films.LikeFilmException;
 import ru.artq.practice.kinopoisk.storage.LikeStorage;
@@ -8,7 +9,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@Component("inMemoryLikeStorage")
+@Component
+@Profile("in-memory")
 public class InMemoryLikeStorage implements LikeStorage {
     Map<Integer, Set<Integer>> userLikes = new HashMap<>();
 
@@ -45,5 +47,11 @@ public class InMemoryLikeStorage implements LikeStorage {
     @Override
     public Collection<Integer> getUserLikes(Integer userId) {
         return Optional.ofNullable(userLikes.get(userId)).orElse(Set.of());
+    }
+
+    @Override
+    public Collection<Integer> getFilmLikes(Integer filmId) {
+        //todo
+        return List.of();
     }
 }

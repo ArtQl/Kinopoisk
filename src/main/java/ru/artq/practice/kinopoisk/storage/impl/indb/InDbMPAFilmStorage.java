@@ -2,6 +2,7 @@ package ru.artq.practice.kinopoisk.storage.impl.indb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
@@ -13,7 +14,8 @@ import java.util.Collection;
 import java.util.Optional;
 
 @Slf4j
-@Component("inDbMPAFilmStorage")
+@Component
+@Profile("db")
 public class InDbMPAFilmStorage implements MPAFilmStorage {
     private final JdbcTemplate jdbcTemplate;
     private static final RowMapper<MPA> ROW_MAPPER = (rs, rowNum) -> MPA.valueOf(rs.getString("TITLE"));

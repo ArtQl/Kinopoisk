@@ -10,4 +10,6 @@ public interface LikeStorage {
     Collection<Integer> getPopularFilms(Integer count);
 
     Collection<Integer> getUserLikes(Integer userId);
+
+    Collection<Integer> getFilmLikes(Integer filmId);
 }

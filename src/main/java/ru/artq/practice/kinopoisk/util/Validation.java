@@ -2,6 +2,8 @@ package ru.artq.practice.kinopoisk.util;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.artq.practice.kinopoisk.exception.ValidationException;
+import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
+import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.model.User;
 
@@ -10,17 +12,23 @@ import java.time.LocalDate;
 @Slf4j
 public class Validation {
     public static void validateFilm(Film film) {
+        if (film == null)
+            throw new FilmNotExistException("Film is null");
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) {
             log.debug("Invalid release date for film {}: {}", film.getName(), film.getReleaseDate());
             throw new ValidationException("Date can't be before 28 dec 1895");
         }
-        if (film.getDuration().isZero() || film.getDuration().isNegative()) {
+        if (film.getDuration() == null
+                || film.getDuration().isZero()
+                || film.getDuration().isNegative()) {
             log.debug("Invalid duration for film {}: {}", film.getName(), film.getDuration());
             throw new ValidationException("Duration must be positive");
         }
     }
 
-    public static  void validateUser(User user) {
+    public static void validateUser(User user) {
+        if (user == null)
+            throw new UserNotExistException("User is null");
         if (user.getUsername() == null || user.getUsername().isBlank()) {
             user.setUsername(user.getLogin());
             log.debug("Username of {} - empty", user.getLogin());
