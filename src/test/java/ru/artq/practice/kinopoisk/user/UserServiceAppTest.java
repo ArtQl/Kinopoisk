@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.User;
@@ -21,6 +22,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 abstract class UserServiceAppTest {
     private final UserService userService;
 
@@ -30,6 +32,12 @@ abstract class UserServiceAppTest {
             .build();
     private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = validatorFactory.getValidator();
+
+    @Test
+    void test() {
+        userService.addUser(user);
+        System.out.println(userService.getUsers());
+    }
 
     @AfterEach
     void end() {

@@ -31,8 +31,10 @@ public class InMemoryMPAFilmStorage implements MPAFilmStorage {
 
     @Override
     public Boolean removeMPAFromFilm(Integer filmId, MPA mpa) {
-        if (mpaFilm.get(filmId) == null || !mpaFilm.get(filmId).contains(mpa))
-            throw new IllegalArgumentException("The film doesn't have the genre");
+        if (mpaFilm.get(filmId) == null || !mpaFilm.get(filmId).contains(mpa)) {
+            log.info("The film doesn't have the genre");
+            return false;
+        }
         return mpaFilm.get(filmId).remove(mpa);
     }
 }

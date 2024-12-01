@@ -1,5 +1,6 @@
 package ru.artq.practice.kinopoisk.service.impl;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import java.util.Collection;
 
 @Service
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Getter
 public class GenreFilmServiceImpl implements GenreFilmService {
     private final GenreFilmStorage genreFilmStorage;
     private final FilmStorage filmStorage;

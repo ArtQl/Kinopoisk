@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.artq.practice.kinopoisk.exception.user.FriendshipException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.FriendshipStatus;
@@ -21,8 +21,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 abstract class FriendServiceTest {
     private final FriendshipServiceImpl friendshipService;
+
+    @Test
+    void test() {
+        System.out.println(friendshipService.getUserStorage().getUsers());
+    }
 
     @BeforeEach
     void start() {
@@ -125,7 +131,6 @@ abstract class FriendServiceTest {
                 friendshipService.getCommonFriends(2,1)
                         .stream().toList().getFirst());
 
-        friendshipService.getCommonFriends(2,3).forEach(System.out::println);
         assertEquals(2, friendshipService.getCommonFriends(2,3).size());
     }
 }

@@ -47,9 +47,9 @@ public class InDbMPAFilmStorage implements MPAFilmStorage {
 
     @Override
     public Boolean removeMPAFromFilm(Integer filmId, MPA mpa) {
-        if (hasMPA(filmId, mpa)) {
+        if (!hasMPA(filmId, mpa)) {
             log.warn("Film {} does not have mpa {}", filmId, mpa);
-            throw new MPANotFoundException("The film doesn't have the mpa");
+            return false;
         }
         String sql = "DELETE FROM FILM_MPA WHERE FILM_ID = ? AND MPA_ID = ?";
         return jdbcTemplate.update(sql, filmId, getMPAId(mpa)) > 0;
@@ -61,13 +61,15 @@ public class InDbMPAFilmStorage implements MPAFilmStorage {
                 JOIN MPA ON FILM_MPA.MPA_ID = MPA.ID
                 WHERE FILM_ID = ? AND TITLE = ?
                 """;
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, Integer.class, filmId, mpa)).orElse(0) > 0;
+        return Optional.ofNullable(
+                jdbcTemplate.queryForObject(sql, Integer.class, filmId, mpa.name()))
+                .orElse(0) > 0;
     }
 
     private Integer getMPAId(MPA mpa) {
         String sql = "SELECT ID FROM MPA WHERE TITLE = ?";
         return Optional.ofNullable(
-                        jdbcTemplate.queryForObject(sql, Integer.class, mpa))
+                        jdbcTemplate.queryForObject(sql, Integer.class, mpa.name()))
                 .orElseThrow(() -> new MPANotFoundException("MPA " + mpa + " not found"));
     }
 }

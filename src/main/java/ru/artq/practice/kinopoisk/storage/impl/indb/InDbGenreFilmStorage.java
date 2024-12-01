@@ -47,9 +47,9 @@ public class InDbGenreFilmStorage implements GenreFilmStorage {
 
     @Override
     public Boolean removeGenreFromFilm(Integer filmId, Genre genre) {
-        if (hasGenre(filmId, genre)) {
-            log.warn("Film {} does not have genre {}", filmId, genre);
-            throw new GenreNotFoundException("The film doesn't have the genre");
+        if (!hasGenre(filmId, genre)) {
+            log.warn("Film {} does not have the genre {}", filmId, genre);
+            return false;
         }
         String sql = "DELETE FROM FILM_GENRE WHERE FILM_ID = ? AND GENRE_ID = ?";
         return jdbcTemplate.update(sql, filmId, getGenreId(genre)) > 0;
@@ -61,13 +61,15 @@ public class InDbGenreFilmStorage implements GenreFilmStorage {
                 JOIN GENRE ON FILM_GENRE.GENRE_ID = GENRE.ID
                 WHERE FILM_ID = ? AND TITLE = ?
                 """;
-        return Optional.ofNullable(jdbcTemplate.queryForObject(sql, Integer.class, filmId, genre)).orElse(0) > 0;
+        return Optional.ofNullable(
+                jdbcTemplate.queryForObject(sql, Integer.class, filmId, genre.name()))
+                .orElse(0) > 0;
     }
 
     private Integer getGenreId(Genre genre) {
         String sql = "SELECT ID FROM GENRE WHERE TITLE = ?";
         return Optional.ofNullable(
-                jdbcTemplate.queryForObject(sql, Integer.class, genre))
+                jdbcTemplate.queryForObject(sql, Integer.class, genre.name()))
                 .orElseThrow(() -> new GenreNotFoundException("Genre " + genre + " not found"));
     }
 }

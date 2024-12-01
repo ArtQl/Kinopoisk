@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
@@ -25,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 abstract class FilmServiceAppTest {
     private final FilmService filmService;
-
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
@@ -44,8 +45,7 @@ abstract class FilmServiceAppTest {
         assertEquals(4, violations.size(), "empty film");
 
         assertThrows(ValidationException.class, () -> filmService.addFilm(Film.builder()
-                .name("a")
-                .description("a")
+                .name("a").description("a")
                 .duration(Duration.ofMinutes(-21))
                 .releaseDate(LocalDate.of(2020, 12, 31))
                 .build()), "Negative duration");
@@ -58,6 +58,7 @@ abstract class FilmServiceAppTest {
 
         Film film1 = Film.builder().id(123).releaseDate(LocalDate.now()).name("dfa").duration(Duration.ofMinutes(10)).build();
         assertThrows(InvalidFilmIdException.class, () -> filmService.addFilm(film1), "ID Exist");
+        System.out.println(filmService.getFilms());
     }
 
     @Test

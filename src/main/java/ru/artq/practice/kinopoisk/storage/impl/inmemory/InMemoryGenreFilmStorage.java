@@ -31,8 +31,10 @@ public class InMemoryGenreFilmStorage implements GenreFilmStorage {
 
     @Override
     public Boolean removeGenreFromFilm(Integer filmId, Genre genre) {
-        if (genreFilm.get(filmId) == null || !genreFilm.get(filmId).contains(genre))
-            throw new IllegalArgumentException("The film doesn't have the genre");
+        if (genreFilm.get(filmId) == null || !genreFilm.get(filmId).contains(genre)) {
+            log.info("The film doesn't have the genre");
+            return false;
+        }
         return genreFilm.get(filmId).remove(genre);
     }
 }

@@ -65,8 +65,8 @@ public class FriendshipDbStorage implements FriendshipStorage {
 
     @Override
     public Collection<Friendship> getFriendshipsById(Integer userId) {
-        String sql = "SELECT * FROM FRIENDS WHERE (USER_ID = ? or FRIEND_ID = ?) AND STATUS = ?";
-        return jdbcTemplate.query(sql, rowMapper, userId, userId, FriendshipStatus.ACCEPTED.name());
+        String sql = "SELECT * FROM FRIENDS WHERE (USER_ID = ? or FRIEND_ID = ?) AND STATUS = 'ACCEPTED'";
+        return jdbcTemplate.query(sql, rowMapper, userId, userId);
     }
 
     @Override
@@ -85,13 +85,20 @@ public class FriendshipDbStorage implements FriendshipStorage {
     @Override
     public Collection<Integer> getCommonFriends(Integer userId, Integer otherUserId) {
         String sql = """
-                SELECT f1.friend_id FROM friends f1
-                JOIN friends f2 ON f1.friend_id = f2.friend_id
-                WHERE f1.user_id = ? AND f2.user_id = ?
-                AND f1.status = ? AND f2.status = ?
+                SELECT USER_ID ID FROM FRIENDS
+                WHERE FRIEND_ID = ?
+                  AND STATUS = 'ACCEPTED'
+                UNION ALL
+                SELECT FRIEND_ID ID FROM FRIENDS
+                WHERE USER_ID = ?
+                  AND STATUS = 'ACCEPTED'
                 """;
-        return jdbcTemplate.queryForList(sql, Integer.class,
-                userId, otherUserId, FriendshipStatus.ACCEPTED.name(), FriendshipStatus.ACCEPTED.name());
+        List<Integer> set1 = jdbcTemplate
+                .queryForList(sql, Integer.class, userId, userId);
+        List<Integer> set2 = jdbcTemplate
+                .queryForList(sql, Integer.class, otherUserId, otherUserId);
+        set1.retainAll(set2);
+        return set1;
     }
 
     private Boolean existsFriendship(Integer userID, Integer friendId) {

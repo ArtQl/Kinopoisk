@@ -1,5 +1,6 @@
 package ru.artq.practice.kinopoisk.service.impl;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import ru.artq.practice.kinopoisk.storage.MPAFilmStorage;
 import java.util.Collection;
 
 @Service
+@Getter
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class MPAFilmServiceImpl implements MPAFilmService {
     private final MPAFilmStorage mpaFilmStorage;
