@@ -14,8 +14,8 @@ import ru.artq.practice.kinopoisk.storage.UserStorage;
 import java.util.Collection;
 
 @Service
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Getter
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class LikeFilmServiceImpl implements LikeFilmService {
     private final LikeStorage likeStorage;
     private final UserStorage userStorage;

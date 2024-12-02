@@ -70,11 +70,6 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
     }
 
     @Override
-    public void clear() {
-        friendships.clear();
-    }
-
-    @Override
     public Collection<Integer> getCommonFriends(Integer userId, Integer otherUserId) {
         Set<Integer> userSet = getFriendshipsById(userId).stream()
                 .map(f -> f.getUserId().equals(userId)

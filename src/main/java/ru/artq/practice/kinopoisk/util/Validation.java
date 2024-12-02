@@ -5,6 +5,8 @@ import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
+import ru.artq.practice.kinopoisk.model.Genre;
+import ru.artq.practice.kinopoisk.model.MPA;
 import ru.artq.practice.kinopoisk.model.User;
 
 import java.time.LocalDate;
@@ -37,5 +39,29 @@ public class Validation {
             log.debug("{}: Birthday can't be in the future", user.getBirthday());
             throw new ValidationException("Birthday can't be in the future");
         }
+    }
+
+    public static Genre validateGenre(String genre) {
+        Genre genreEnum;
+        if (genre == null)
+            throw new IllegalArgumentException("Genre cannot be null");
+        try {
+            genreEnum = Genre.valueOf(genre.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Genre is not correct", e);
+        }
+        return genreEnum;
+    }
+
+    public static MPA validateMPA(String mpa) {
+        MPA mpaEnum;
+        if (mpa == null)
+            throw new IllegalArgumentException("MPA cannot be null");
+        try {
+            mpaEnum = MPA.valueOf(mpa.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("MPA is not correct", e);
+        }
+        return mpaEnum;
     }
 }

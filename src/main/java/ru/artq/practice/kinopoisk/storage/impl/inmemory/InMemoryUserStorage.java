@@ -55,6 +55,8 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public Collection<User> getUsers() {
+        System.out.println("in mem");
+
         if (users.isEmpty()) {
             log.debug("Users no added");
             throw new UserNotExistException("Users no added");

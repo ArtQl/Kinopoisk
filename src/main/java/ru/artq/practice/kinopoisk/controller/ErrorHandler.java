@@ -11,6 +11,8 @@ import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
+import ru.artq.practice.kinopoisk.exception.films.LikeFilmException;
+import ru.artq.practice.kinopoisk.exception.user.FriendshipException;
 import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
@@ -43,7 +45,9 @@ public class ErrorHandler {
 
     @ExceptionHandler({
             FilmAlreadyExistException.class,
-            UserAlreadyExistException.class
+            UserAlreadyExistException.class,
+            LikeFilmException.class,
+            FriendshipException.class
     })
     @ResponseStatus(HttpStatus.CONFLICT)
     private ErrorResponse handleAlreadyExistException(RuntimeException e) {

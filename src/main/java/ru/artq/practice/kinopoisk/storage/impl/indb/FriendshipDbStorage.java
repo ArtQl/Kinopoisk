@@ -78,11 +78,6 @@ public class FriendshipDbStorage implements FriendshipStorage {
     }
 
     @Override
-    public void clear() {
-        jdbcTemplate.execute("DELETE FROM FRIENDS");
-    }
-
-    @Override
     public Collection<Integer> getCommonFriends(Integer userId, Integer otherUserId) {
         String sql = """
                 SELECT USER_ID ID FROM FRIENDS

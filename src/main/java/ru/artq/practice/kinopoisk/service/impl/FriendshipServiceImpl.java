@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Getter
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FriendshipServiceImpl implements FriendshipService {
     private final UserStorage userStorage;
     private final FriendshipStorage friendshipStorage;
@@ -55,11 +55,6 @@ public class FriendshipServiceImpl implements FriendshipService {
         Collection<Integer> res = friendshipStorage.getCommonFriends(userId, otherId);
         if (res.isEmpty()) return List.of();
         return res.stream().map(userStorage::getUser).toList();
-    }
-
-    @Override
-    public void clearFriends() {
-        friendshipStorage.clear();
     }
 
     private void validateUsers(Integer userId, Integer friendId) {

@@ -1,6 +1,7 @@
 package ru.artq.practice.kinopoisk.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.artq.practice.kinopoisk.model.Film;
@@ -13,24 +14,12 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/films")
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class FilmController {
     private final FilmService filmService;
     private final LikeFilmService likeFilmService;
     private final GenreFilmService genreFilmService;
     private final MPAFilmService mpaFilmService;
-
-    @Autowired
-    public FilmController(
-            FilmService filmService,
-            LikeFilmService likeFilmService,
-            GenreFilmService genreFilmService,
-            MPAFilmService mpaFilmService
-    ) {
-        this.filmService = filmService;
-        this.likeFilmService = likeFilmService;
-        this.genreFilmService = genreFilmService;
-        this.mpaFilmService = mpaFilmService;
-    }
 
     @PostMapping
     public Film addFilm(@Valid @RequestBody Film film) {

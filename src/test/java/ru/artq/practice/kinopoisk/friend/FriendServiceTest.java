@@ -1,7 +1,6 @@
 package ru.artq.practice.kinopoisk.friend;
 
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 abstract class FriendServiceTest {
     private final FriendshipServiceImpl friendshipService;
 
@@ -41,11 +40,6 @@ abstract class FriendServiceTest {
                             .birthday(LocalDate.now())
                             .build());
         }
-    }
-
-    @AfterEach
-    void end() {
-        friendshipService.clearFriends();
     }
 
     @Test

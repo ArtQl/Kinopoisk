@@ -15,6 +15,4 @@ public interface FriendshipService {
     Collection<User> getFriends(Integer userId);
 
     Collection<User> getCommonFriends(Integer userId, Integer otherId);
-
-    void clearFriends();
 }

@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS friends
     PRIMARY KEY (user_id, friend_id)
 );
 
-ALTER TABLE friends
-    ADD CONSTRAINT check_status
-        CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED'));
+-- ALTER TABLE friends
+--     ADD CONSTRAINT check_status
+--         CHECK (status IN ('PENDING', 'ACCEPTED', 'REJECTED'));
 
 
 CREATE TABLE IF NOT EXISTS likes
@@ -63,11 +63,11 @@ CREATE TABLE IF NOT EXISTS film_mpa
     PRIMARY KEY (film_id, mpa_id)
 );
 
-CREATE INDEX idx_friends_user ON friends (user_id);
-CREATE INDEX idx_friends_friend ON friends (friend_id);
-CREATE INDEX idx_likes_film ON likes (film_id);
-CREATE INDEX idx_likes_user ON likes (user_id);
-CREATE INDEX idx_film_genre_film ON film_genre (film_id);
-CREATE INDEX idx_film_genre_genre ON film_genre (genre_id);
-CREATE INDEX idx_film_mpa_film_id ON film_mpa (film_id);
-CREATE INDEX idx_film_mpa_mpa ON film_mpa (mpa_id);
+-- CREATE INDEX idx_friends_user ON friends (user_id);
+-- CREATE INDEX idx_friends_friend ON friends (friend_id);
+-- CREATE INDEX idx_likes_film ON likes (film_id);
+-- CREATE INDEX idx_likes_user ON likes (user_id);
+-- CREATE INDEX idx_film_genre_film ON film_genre (film_id);
+-- CREATE INDEX idx_film_genre_genre ON film_genre (genre_id);
+-- CREATE INDEX idx_film_mpa_film_id ON film_mpa (film_id);
+-- CREATE INDEX idx_film_mpa_mpa ON film_mpa (mpa_id);

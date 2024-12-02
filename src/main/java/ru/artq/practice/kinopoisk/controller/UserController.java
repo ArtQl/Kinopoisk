@@ -1,6 +1,8 @@
 package ru.artq.practice.kinopoisk.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.artq.practice.kinopoisk.model.User;
 import ru.artq.practice.kinopoisk.service.FriendshipService;
@@ -10,14 +12,10 @@ import java.util.Collection;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserController {
     private final UserService userService;
     private final FriendshipService friendshipService;
-
-    public UserController(UserService userService, FriendshipService friendshipService) {
-        this.userService = userService;
-        this.friendshipService = friendshipService;
-    }
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {

@@ -88,6 +88,7 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public Collection<User> getUsers() {
+        System.out.println("in db");
         String sql = "SELECT * FROM users ORDER BY ID";
         Collection<User> users = jdbcTemplate.query(sql, rowMapper);
         if (users.isEmpty()) {

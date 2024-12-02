@@ -8,12 +8,13 @@ import ru.artq.practice.kinopoisk.model.Genre;
 import ru.artq.practice.kinopoisk.service.GenreFilmService;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
 import ru.artq.practice.kinopoisk.storage.GenreFilmStorage;
+import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.util.Collection;
 
 @Service
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Getter
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class GenreFilmServiceImpl implements GenreFilmService {
     private final GenreFilmStorage genreFilmStorage;
     private final FilmStorage filmStorage;
@@ -27,24 +28,12 @@ public class GenreFilmServiceImpl implements GenreFilmService {
     @Override
     public Boolean addGenreToFilm(Integer filmId, String genre) {
         filmStorage.getFilm(filmId);
-        return genreFilmStorage.addGenreToFilm(filmId, validateGenre(genre));
+        return genreFilmStorage.addGenreToFilm(filmId, Validation.validateGenre(genre));
     }
 
     @Override
     public Boolean removeGenreFromFilm(Integer filmId, String genre) {
         filmStorage.getFilm(filmId);
-        return genreFilmStorage.removeGenreFromFilm(filmId, validateGenre(genre));
-    }
-
-    private Genre validateGenre(String genre) {
-        Genre genreEnum;
-        if (genre == null)
-            throw new IllegalArgumentException("Genre cannot be null");
-        try {
-            genreEnum = Genre.valueOf(genre.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Genre is not correct", e);
-        }
-        return genreEnum;
+        return genreFilmStorage.removeGenreFromFilm(filmId, Validation.validateGenre(genre));
     }
 }
