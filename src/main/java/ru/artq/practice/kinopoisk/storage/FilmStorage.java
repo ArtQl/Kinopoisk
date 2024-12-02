@@ -12,4 +12,6 @@ public interface FilmStorage {
     Collection<Film> getFilms();
 
     Film getFilm(Integer id);
+
+    Collection<Film> getTopFilmByYear(Integer year);
 }

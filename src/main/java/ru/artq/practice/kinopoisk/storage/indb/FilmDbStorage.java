@@ -96,6 +96,16 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    @Override
+    public Collection<Film> getTopFilmByYear(Integer year) {
+        Collection<Film> films = getFilms().stream().filter(film -> year.equals(film.getReleaseDate().getYear())).toList();
+        if (films.isEmpty()) {
+            log.debug("Films no");
+            throw new FilmNotExistException("Films no added");
+        }
+        return films;
+    }
+
     private boolean doesFilmExistById(Integer id) {
         return Optional.ofNullable(jdbcTemplate
                         .queryForObject("SELECT COUNT(*) FROM FILMS WHERE ID = ?", Integer.class, id))

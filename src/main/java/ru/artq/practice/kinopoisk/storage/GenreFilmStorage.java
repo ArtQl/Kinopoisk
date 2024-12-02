@@ -11,4 +11,6 @@ public interface GenreFilmStorage {
     Boolean addGenreToFilm(Integer filmId, Genre genre);
 
     Boolean removeGenreFromFilm(Integer filmId, Genre genre);
+
+    Collection<Integer> getTopFilmByGenre(Genre genre);
 }

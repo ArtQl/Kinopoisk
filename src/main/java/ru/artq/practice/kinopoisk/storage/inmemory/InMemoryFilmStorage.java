@@ -9,10 +9,7 @@ import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -65,5 +62,11 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilm(Integer id) {
         return Optional.ofNullable(films.get(id))
                 .orElseThrow(() -> new FilmNotExistException("Film doesn't exist"));
+    }
+
+    @Override
+    public Collection<Film> getTopFilmByYear(Integer year) {
+        return films.values().stream()
+                .filter(film -> year.equals(film.getReleaseDate().getYear())).toList();
     }
 }
