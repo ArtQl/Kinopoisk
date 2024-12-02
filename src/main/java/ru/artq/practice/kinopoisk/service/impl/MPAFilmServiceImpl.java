@@ -8,7 +8,6 @@ import ru.artq.practice.kinopoisk.model.MPA;
 import ru.artq.practice.kinopoisk.service.MPAFilmService;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
 import ru.artq.practice.kinopoisk.storage.MPAFilmStorage;
-import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.util.Collection;
 
@@ -21,19 +20,22 @@ public class MPAFilmServiceImpl implements MPAFilmService {
 
     @Override
     public Collection<String> getAllMPAFilm(Integer filmId) {
-        filmStorage.getFilm(filmId);
-        return mpaFilmStorage.getAllMPAFilm(filmId).stream().map(MPA::name).toList();
+        return mpaFilmStorage
+                .getAllMPAFilm(filmStorage.getFilm(filmId).getId())
+                .stream().map(MPA::name).toList();
     }
 
     @Override
     public Boolean addMPAToFilm(Integer filmId, String mpa) {
-        filmStorage.getFilm(filmId);
-        return mpaFilmStorage.addMPAToFilm(filmId, Validation.validateMPA(mpa));
+        return mpaFilmStorage.addMPAToFilm(
+                filmStorage.getFilm(filmId).getId(),
+                ValidationService.validateMPA(mpa));
     }
 
     @Override
     public Boolean removeMPAFromFilm(Integer filmId, String mpa) {
-        filmStorage.getFilm(filmId);
-        return mpaFilmStorage.removeMPAFromFilm(filmId, Validation.validateMPA(mpa));
+        return mpaFilmStorage.removeMPAFromFilm(
+                filmStorage.getFilm(filmId).getId(),
+                ValidationService.validateMPA(mpa));
     }
 }

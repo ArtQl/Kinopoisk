@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.inmemory;
+package ru.artq.practice.kinopoisk.storage.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -67,10 +67,5 @@ public class InMemoryUserStorage implements UserStorage {
     @Override
     public User getUser(Integer id) {
         return Optional.ofNullable(users.get(id)).orElseThrow(() -> new UserNotExistException("User with id: " + id + " not found"));
-    }
-
-    @Override
-    public void clearUsers() {
-        users.clear();
     }
 }

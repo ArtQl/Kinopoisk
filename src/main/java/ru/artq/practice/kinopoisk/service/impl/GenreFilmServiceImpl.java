@@ -8,7 +8,6 @@ import ru.artq.practice.kinopoisk.model.Genre;
 import ru.artq.practice.kinopoisk.service.GenreFilmService;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
 import ru.artq.practice.kinopoisk.storage.GenreFilmStorage;
-import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.util.Collection;
 
@@ -28,12 +27,12 @@ public class GenreFilmServiceImpl implements GenreFilmService {
     @Override
     public Boolean addGenreToFilm(Integer filmId, String genre) {
         filmStorage.getFilm(filmId);
-        return genreFilmStorage.addGenreToFilm(filmId, Validation.validateGenre(genre));
+        return genreFilmStorage.addGenreToFilm(filmId, ValidationService.validateGenre(genre));
     }
 
     @Override
     public Boolean removeGenreFromFilm(Integer filmId, String genre) {
         filmStorage.getFilm(filmId);
-        return genreFilmStorage.removeGenreFromFilm(filmId, Validation.validateGenre(genre));
+        return genreFilmStorage.removeGenreFromFilm(filmId, ValidationService.validateGenre(genre));
     }
 }

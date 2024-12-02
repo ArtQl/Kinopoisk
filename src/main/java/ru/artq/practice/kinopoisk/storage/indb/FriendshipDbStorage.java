@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.indb;
+package ru.artq.practice.kinopoisk.storage.indb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,8 +98,8 @@ public class FriendshipDbStorage implements FriendshipStorage {
 
     private Boolean existsFriendship(Integer userID, Integer friendId) {
         return Optional.ofNullable(jdbcTemplate.queryForObject(
-                "SELECT COUNT(*) FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?",
-                Integer.class, userID, friendId))
+                        "SELECT COUNT(*) FROM FRIENDS WHERE USER_ID = ? AND FRIEND_ID = ?",
+                        Integer.class, userID, friendId))
                 .orElse(0) > 0;
     }
 }

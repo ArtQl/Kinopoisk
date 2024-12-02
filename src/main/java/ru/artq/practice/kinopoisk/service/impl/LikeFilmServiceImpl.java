@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.service.LikeFilmService;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
@@ -37,10 +36,6 @@ public class LikeFilmServiceImpl implements LikeFilmService {
 
     @Override
     public Collection<Film> getPopularFilms(Integer count) {
-        if (filmStorage.getFilms() == null)
-            throw new FilmNotExistException("Films not exist");
-        if (count == null || count <= 0 || count > filmStorage.getFilms().size())
-            count = 10;
         return likeStorage.getPopularFilms(count)
                 .stream().map(filmStorage::getFilm).toList();
     }

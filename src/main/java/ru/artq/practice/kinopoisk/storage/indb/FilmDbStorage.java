@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.indb;
+package ru.artq.practice.kinopoisk.storage.indb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
-import ru.artq.practice.kinopoisk.storage.impl.indb.rowmapper.FilmRowMapper;
+import ru.artq.practice.kinopoisk.storage.indb.rowmapper.FilmRowMapper;
 
 import java.sql.Date;
 import java.util.Collection;
@@ -24,8 +24,8 @@ import java.util.Optional;
 @Component
 @Profile("db")
 public class FilmDbStorage implements FilmStorage {
-    JdbcTemplate jdbcTemplate;
-    SimpleJdbcInsert simpleJdbcInsert;
+    private final JdbcTemplate jdbcTemplate;
+    private final SimpleJdbcInsert simpleJdbcInsert;
 
     @Autowired
     public FilmDbStorage(JdbcTemplate jdbcTemplate) {
@@ -94,11 +94,6 @@ public class FilmDbStorage implements FilmStorage {
         } catch (DataAccessException e) {
             throw new RuntimeException("Error accessing the database for film with id: " + id, e);
         }
-    }
-
-    @Override
-    public void clearFilms() {
-        jdbcTemplate.execute("DELETE FROM FILMS");
     }
 
     private boolean doesFilmExistById(Integer id) {

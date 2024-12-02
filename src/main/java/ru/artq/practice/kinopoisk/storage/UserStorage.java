@@ -12,6 +12,4 @@ public interface UserStorage {
     Collection<User> getUsers();
 
     User getUser(Integer id);
-
-    void clearUsers();
 }

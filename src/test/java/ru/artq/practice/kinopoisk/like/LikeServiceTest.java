@@ -31,10 +31,10 @@ abstract class LikeServiceTest {
         for (int i = 1; i <= 10; i++) {
             likeFilmService.getFilmStorage().addFilm(
                     Film.builder()
-                    .name("a" + i).description("1234567891")
-                    .duration(Duration.ofMinutes(30))
-                    .releaseDate(LocalDate.of(2020,12,31))
-                    .build());
+                            .name("a" + i).description("1234567891")
+                            .duration(Duration.ofMinutes(30))
+                            .releaseDate(LocalDate.of(2020, 12, 31))
+                            .build());
             likeFilmService.getUserStorage().addUser(
                     User.builder()
                             .username("Art" + i)
@@ -54,32 +54,33 @@ abstract class LikeServiceTest {
         assertThrows(FilmNotExistException.class, () -> likeFilmService.likeFilm(1, -1), "No Film");
         assertThrows(UserNotExistException.class, () -> likeFilmService.likeFilm(-1, 1), "No User");
 
-        likeFilmService.unlikeFilm(1,1);
+        likeFilmService.unlikeFilm(1, 1);
         assertTrue(likeFilmService.getPopularFilms(10).isEmpty());
-        assertThrows(LikeFilmException.class, () -> likeFilmService.unlikeFilm(1,1), "no like");
-        assertThrows(FilmNotExistException.class, () -> likeFilmService.unlikeFilm(1,-1), "no Film");
-        assertThrows(UserNotExistException.class, () -> likeFilmService.unlikeFilm(-1,1), "no User");
+        assertThrows(LikeFilmException.class, () -> likeFilmService.unlikeFilm(1, 1), "no like");
+        assertThrows(FilmNotExistException.class, () -> likeFilmService.unlikeFilm(1, -1), "no Film");
+        assertThrows(UserNotExistException.class, () -> likeFilmService.unlikeFilm(-1, 1), "no User");
     }
 
     @Test
     void getPopularFilm() {
+        assertTrue(likeFilmService.getPopularFilms(10).isEmpty());
         assertTrue(likeFilmService.getUserLikes(1).isEmpty());
-        likeFilmService.likeFilm(1,1);
-        likeFilmService.likeFilm(1,2);
-        likeFilmService.likeFilm(1,3);
+        likeFilmService.likeFilm(1, 1);
+        likeFilmService.likeFilm(1, 2);
+        likeFilmService.likeFilm(1, 3);
         assertEquals(3, likeFilmService.getUserLikes(1).size());
-        likeFilmService.likeFilm(2,2);
-        likeFilmService.likeFilm(2,3);
-        likeFilmService.likeFilm(2,5);
-        likeFilmService.likeFilm(3,4);
-        likeFilmService.likeFilm(3,2);
+        likeFilmService.likeFilm(2, 2);
+        likeFilmService.likeFilm(2, 3);
+        likeFilmService.likeFilm(2, 5);
+        likeFilmService.likeFilm(3, 4);
+        likeFilmService.likeFilm(3, 2);
         assertEquals(2, likeFilmService.getPopularFilms(6).stream().toList().getFirst().getId());
         assertEquals(5, likeFilmService.getPopularFilms(6).stream().toList().getLast().getId());
 
-        likeFilmService.unlikeFilm(1,1);
-        likeFilmService.unlikeFilm(1,2);
-        likeFilmService.unlikeFilm(2,2);
-        likeFilmService.unlikeFilm(2,5);
+        likeFilmService.unlikeFilm(1, 1);
+        likeFilmService.unlikeFilm(1, 2);
+        likeFilmService.unlikeFilm(2, 2);
+        likeFilmService.unlikeFilm(2, 5);
         assertEquals(3, likeFilmService.getPopularFilms(5).stream().toList().getFirst().getId());
         assertEquals(4, likeFilmService.getPopularFilms(5).stream().toList().getLast().getId());
     }

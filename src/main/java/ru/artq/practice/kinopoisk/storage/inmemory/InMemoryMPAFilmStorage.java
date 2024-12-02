@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.inmemory;
+package ru.artq.practice.kinopoisk.storage.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;

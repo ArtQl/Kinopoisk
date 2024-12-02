@@ -12,6 +12,4 @@ public interface FilmStorage {
     Collection<Film> getFilms();
 
     Film getFilm(Integer id);
-
-    void clearFilms();
 }

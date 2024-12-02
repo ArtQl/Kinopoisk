@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.artq.practice.kinopoisk.model.User;
-import ru.artq.practice.kinopoisk.service.FriendshipService;
 import ru.artq.practice.kinopoisk.service.UserService;
 
 import java.util.Collection;
@@ -15,7 +14,6 @@ import java.util.Collection;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 public class UserController {
     private final UserService userService;
-    private final FriendshipService friendshipService;
 
     @PostMapping
     public User addUser(@Valid @RequestBody User user) {
@@ -35,30 +33,5 @@ public class UserController {
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Integer id) {
         return userService.getUser(id);
-    }
-
-    @PutMapping("/{id}/friends/{friendId}")
-    public Boolean sendFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
-        return friendshipService.sendFriendRequest(id, friendId);
-    }
-
-    @PostMapping("/{id}/friends/{friendId}")
-    public Boolean acceptFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
-        return friendshipService.acceptFriendRequest(id, friendId);
-    }
-
-    @DeleteMapping("/{id}/friends/{friendId}")
-    public Boolean rejectFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
-        return friendshipService.rejectFriendRequest(id, friendId);
-    }
-
-    @GetMapping("/{id}/friends")
-    public Collection<User> getFriends(@PathVariable Integer id) {
-        return friendshipService.getFriends(id);
-    }
-
-    @GetMapping("/{id}/friends/common/{otherId}")
-    public Collection<User> getCommonFriends(@PathVariable Integer id, @PathVariable Integer otherId) {
-        return friendshipService.getCommonFriends(id, otherId);
     }
 }

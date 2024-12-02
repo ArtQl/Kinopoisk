@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.indb.rowmapper;
+package ru.artq.practice.kinopoisk.storage.indb.rowmapper;
 
 import org.springframework.jdbc.core.RowMapper;
 import ru.artq.practice.kinopoisk.model.Film;

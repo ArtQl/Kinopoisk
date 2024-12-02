@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.indb;
+package ru.artq.practice.kinopoisk.storage.indb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,15 +110,10 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
-    @Override
-    public void clearUsers() {
-        jdbcTemplate.execute("DELETE FROM USERS");
-    }
-
     private Boolean doesUserExistById(Integer id) {
         String sql = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
         return Optional.ofNullable(jdbcTemplate
-                .queryForObject(sql, Integer.class, id))
+                        .queryForObject(sql, Integer.class, id))
                 .orElse(0) > 0;
     }
 }

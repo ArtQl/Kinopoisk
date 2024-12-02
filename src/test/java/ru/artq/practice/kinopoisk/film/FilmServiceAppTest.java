@@ -1,6 +1,5 @@
 package ru.artq.practice.kinopoisk.film;
 
-import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -19,7 +18,6 @@ import ru.artq.practice.kinopoisk.service.FilmService;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -32,26 +30,28 @@ abstract class FilmServiceAppTest {
     private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
     private final Validator validator = factory.getValidator();
 
-    Film film = Film.builder()
-            .name("a")
-            .description("1234567891")
+    private final Film film = Film.builder()
+            .name("a").description("1234567891")
             .duration(Duration.ofMinutes(30))
             .releaseDate(LocalDate.of(2020, 12, 31))
             .build();
 
     @Test
     void addFilm() {
-        Set<ConstraintViolation<Film>> violations = validator.validate(Film.builder().build());
-        assertEquals(4, violations.size(), "empty film");
+        assertThrows(FilmNotExistException.class, filmService::getFilms);
+        assertDoesNotThrow(() -> filmService.addFilm(film), "Fill film");
+        assertEquals(1, filmService.getFilms().size());
 
-        assertThrows(ValidationException.class, () -> filmService.addFilm(Film.builder()
-                .name("a").description("a")
-                .duration(Duration.ofMinutes(-21))
-                .releaseDate(LocalDate.of(2020, 12, 31))
+        film.setId(99);
+        assertThrows(InvalidFilmIdException.class, () -> filmService.updateFilm(film));
+
+        assertEquals(4, validator.validate(Film.builder().build()).size(), "empty film");
+        assertThrows(ValidationException.class,
+                () -> filmService.addFilm(Film.builder().name("a").description("a")
+                .duration(Duration.ofMinutes(-21)).releaseDate(LocalDate.of(2020, 12, 31))
                 .build()), "Negative duration");
 
         assertEquals(0, validator.validate(film).size());
-        assertDoesNotThrow(() -> filmService.addFilm(film), "Fill film");
 
         assertThrows(FilmNotExistException.class, () -> filmService.addFilm(null));
         assertThrows(FilmAlreadyExistException.class, () -> filmService.addFilm(filmService.getFilmById(1)), "Already Exist");
@@ -59,20 +59,5 @@ abstract class FilmServiceAppTest {
         Film film1 = Film.builder().id(123).releaseDate(LocalDate.now()).name("dfa").duration(Duration.ofMinutes(10)).build();
         assertThrows(InvalidFilmIdException.class, () -> filmService.addFilm(film1), "ID Exist");
         System.out.println(filmService.getFilms());
-    }
-
-    @Test
-    void updateFilm() {
-        filmService.addFilm(film);
-        film.setId(99);
-        assertThrows(InvalidFilmIdException.class, () -> filmService.updateFilm(film));
-    }
-
-    @Test
-    void getFilms() {
-        filmService.clearFilms();
-        assertThrows(FilmNotExistException.class, filmService::getFilms);
-        filmService.addFilm(film);
-        assertEquals(1, filmService.getFilms().size());
     }
 }

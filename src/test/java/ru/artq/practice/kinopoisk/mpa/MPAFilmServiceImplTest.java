@@ -31,13 +31,16 @@ abstract class MPAFilmServiceImplTest {
                         .duration(Duration.ofMinutes(10)).build()
         );
         mpaFilmService.addMPAToFilm(1, MPA.G.name());
-        assertFalse(mpaFilmService.addMPAToFilm(1,  MPA.G.name()), "Already have genre ");
+        assertFalse(mpaFilmService.addMPAToFilm(1, MPA.G.name()), "Already have genre ");
 
-        assertThrows(FilmNotExistException.class, () -> mpaFilmService.addMPAToFilm(0,  MPA.G.name()), "No Film");
-        assertThrows(IllegalArgumentException.class, () -> mpaFilmService.addMPAToFilm(1, "h"), "No genre");
-        assertThrows(IllegalArgumentException.class, () -> mpaFilmService.addMPAToFilm(1, null), "No genre");
+        assertThrows(FilmNotExistException.class,
+                () -> mpaFilmService.addMPAToFilm(0, MPA.G.name()), "No Film");
+        assertThrows(IllegalArgumentException.class,
+                () -> mpaFilmService.addMPAToFilm(1, "h"), "No genre");
+        assertThrows(IllegalArgumentException.class,
+                () -> mpaFilmService.addMPAToFilm(1, null), "No genre");
 
-        mpaFilmService.addMPAToFilm(1,  MPA.PG.name());
+        mpaFilmService.addMPAToFilm(1, MPA.PG.name());
         mpaFilmService.addMPAToFilm(1, MPA.R.name());
         assertEquals(3, mpaFilmService.getAllMPAFilm(1).size());
 

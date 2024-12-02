@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.indb;
+package ru.artq.practice.kinopoisk.storage.indb;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +62,7 @@ public class InDbMPAFilmStorage implements MPAFilmStorage {
                 WHERE FILM_ID = ? AND TITLE = ?
                 """;
         return Optional.ofNullable(
-                jdbcTemplate.queryForObject(sql, Integer.class, filmId, mpa.name()))
+                        jdbcTemplate.queryForObject(sql, Integer.class, filmId, mpa.name()))
                 .orElse(0) > 0;
     }
 

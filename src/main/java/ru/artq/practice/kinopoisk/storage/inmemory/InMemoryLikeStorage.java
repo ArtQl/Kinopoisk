@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.inmemory;
+package ru.artq.practice.kinopoisk.storage.inmemory;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @Component
 @Profile("in-memory")
 public class InMemoryLikeStorage implements LikeStorage {
-    Map<Integer, Set<Integer>> userLikes = new HashMap<>();
+    private final Map<Integer, Set<Integer>> userLikes = new HashMap<>();
 
     @Override
     public Boolean likeFilm(Integer userId, Integer filmId) {
@@ -33,7 +33,7 @@ public class InMemoryLikeStorage implements LikeStorage {
 
     @Override
     public Collection<Integer> getPopularFilms(Integer count) {
-        if(userLikes.isEmpty()) return List.of();
+        if (userLikes.isEmpty()) return List.of();
         return userLikes.values()
                 .stream()
                 .flatMap(Set::stream)

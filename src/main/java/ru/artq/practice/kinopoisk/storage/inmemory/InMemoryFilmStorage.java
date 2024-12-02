@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.inmemory;
+package ru.artq.practice.kinopoisk.storage.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -65,10 +65,5 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilm(Integer id) {
         return Optional.ofNullable(films.get(id))
                 .orElseThrow(() -> new FilmNotExistException("Film doesn't exist"));
-    }
-
-    @Override
-    public void clearFilms() {
-        films.clear();
     }
 }

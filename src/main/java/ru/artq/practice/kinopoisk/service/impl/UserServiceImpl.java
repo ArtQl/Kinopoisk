@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.User;
 import ru.artq.practice.kinopoisk.service.UserService;
 import ru.artq.practice.kinopoisk.storage.UserStorage;
-import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.util.Collection;
 
@@ -21,13 +20,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User addUser(User user) {
-        Validation.validateUser(user);
+        ValidationService.validateUser(user);
         return userStorage.addUser(user);
     }
 
     @Override
     public User updateUser(User user) {
-        Validation.validateUser(user);
+        ValidationService.validateUser(user);
         return userStorage.updateUser(user);
     }
 
@@ -39,10 +38,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUser(Integer id) {
         return userStorage.getUser(id);
-    }
-
-    @Override
-    public void clearUsers() {
-        userStorage.clearUsers();
     }
 }

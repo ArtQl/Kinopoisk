@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.service.FilmService;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
-import ru.artq.practice.kinopoisk.util.Validation;
 
 import java.util.Collection;
 
@@ -21,13 +20,13 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film addFilm(Film film) {
-        Validation.validateFilm(film);
+        ValidationService.validateFilm(film);
         return filmStorage.addFilm(film);
     }
 
     @Override
     public Film updateFilm(Film film) {
-        Validation.validateFilm(film);
+        ValidationService.validateFilm(film);
         return filmStorage.updateFilm(film);
     }
 
@@ -39,10 +38,5 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film getFilmById(Integer id) {
         return filmStorage.getFilm(id);
-    }
-
-    @Override
-    public void clearFilms() {
-        filmStorage.clearFilms();
     }
 }

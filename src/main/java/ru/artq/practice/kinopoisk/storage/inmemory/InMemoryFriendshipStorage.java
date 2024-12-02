@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.inmemory;
+package ru.artq.practice.kinopoisk.storage.inmemory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;
@@ -76,9 +76,9 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
                         ? f.getFriendId() : f.getUserId())
                 .collect(Collectors.toSet());
         Set<Integer> otherUserSet = getFriendshipsById(otherUserId).stream()
-                    .map(f -> f.getUserId().equals(otherUserId)
-                            ? f.getFriendId() : f.getUserId())
-                    .collect(Collectors.toSet());
+                .map(f -> f.getUserId().equals(otherUserId)
+                        ? f.getFriendId() : f.getUserId())
+                .collect(Collectors.toSet());
         userSet.retainAll(otherUserSet);
         return List.copyOf(userSet);
     }

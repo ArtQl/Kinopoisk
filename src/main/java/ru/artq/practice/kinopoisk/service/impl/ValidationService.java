@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.util;
+package ru.artq.practice.kinopoisk.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.artq.practice.kinopoisk.exception.ValidationException;
@@ -12,7 +12,8 @@ import ru.artq.practice.kinopoisk.model.User;
 import java.time.LocalDate;
 
 @Slf4j
-public class Validation {
+public class ValidationService {
+
     public static void validateFilm(Film film) {
         if (film == null)
             throw new FilmNotExistException("Film is null");

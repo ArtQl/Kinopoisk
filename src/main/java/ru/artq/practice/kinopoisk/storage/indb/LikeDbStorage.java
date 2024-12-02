@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.storage.impl.indb;
+package ru.artq.practice.kinopoisk.storage.indb;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;

@@ -24,19 +24,12 @@ import static org.junit.jupiter.api.Assertions.*;
 abstract class FriendServiceTest {
     private final FriendshipServiceImpl friendshipService;
 
-    @Test
-    void test() {
-        System.out.println(friendshipService.getUserStorage().getUsers());
-    }
-
     @BeforeEach
     void start() {
         for (int i = 1; i <= 10; i++) {
             friendshipService.getUserStorage().addUser(
-                    User.builder()
-                            .email("adf@mail.ru")
-                            .login("a" + i)
-                            .username("A" + i)
+                    User.builder().email("adf@mail.ru")
+                            .login("a" + i).username("A" + i)
                             .birthday(LocalDate.now())
                             .build());
         }
@@ -45,11 +38,9 @@ abstract class FriendServiceTest {
     @Test
     void sendFriendsRequest() {
         assertThrows(UserNotExistException.class,
-                () -> friendshipService.sendFriendRequest(1, 99),
-                "No that user");
+                () -> friendshipService.sendFriendRequest(1, 99), "No that user");
         assertThrows(UserNotExistException.class,
-                () -> friendshipService.sendFriendRequest(88, 7),
-                "No that user");
+                () -> friendshipService.sendFriendRequest(88, 7), "No that user");
 
         assertTrue(friendshipService.sendFriendRequest(1, 2));
         assertNotNull(friendshipService.getFriendshipStorage().findFriendship(1, 2),
@@ -68,7 +59,7 @@ abstract class FriendServiceTest {
     void rejectFriendsRequest() {
         friendshipService.sendFriendRequest(1, 2);
         assertTrue(friendshipService.rejectFriendRequest(1, 2));
-        assertEquals(FriendshipStatus.REJECTED, friendshipService.getFriendshipStorage().findFriendship(1,2).getStatus());
+        assertEquals(FriendshipStatus.REJECTED, friendshipService.getFriendshipStorage().findFriendship(1, 2).getStatus());
         assertThrows(FriendshipException.class, () -> friendshipService.rejectFriendRequest(1, 5), "Empty");
         assertThrows(FriendshipException.class, () -> friendshipService.rejectFriendRequest(2, 1), "Empty");
     }
@@ -77,7 +68,7 @@ abstract class FriendServiceTest {
     void acceptFriendsRequest() {
         friendshipService.sendFriendRequest(1, 2);
         assertTrue(friendshipService.acceptFriendRequest(1, 2));
-        assertEquals(FriendshipStatus.ACCEPTED, friendshipService.getFriendshipStorage().findFriendship(1,2).getStatus());
+        assertEquals(FriendshipStatus.ACCEPTED, friendshipService.getFriendshipStorage().findFriendship(1, 2).getStatus());
         assertThrows(FriendshipException.class, () -> friendshipService.acceptFriendRequest(1, 5), "Empty");
         assertThrows(FriendshipException.class, () -> friendshipService.acceptFriendRequest(2, 1), "Empty");
     }
@@ -101,30 +92,30 @@ abstract class FriendServiceTest {
 
     @Test
     void getCommonFriends() {
-        friendshipService.sendFriendRequest(1,2);
-        friendshipService.sendFriendRequest(1,3);
-        friendshipService.sendFriendRequest(1,4);
+        friendshipService.sendFriendRequest(1, 2);
+        friendshipService.sendFriendRequest(1, 3);
+        friendshipService.sendFriendRequest(1, 4);
         friendshipService.acceptFriendRequest(1, 2);
         friendshipService.acceptFriendRequest(1, 3);
         friendshipService.acceptFriendRequest(1, 4);
 
         friendshipService.sendFriendRequest(2, 3);
         friendshipService.sendFriendRequest(2, 5);
-        friendshipService.acceptFriendRequest(2,3);
-        friendshipService.acceptFriendRequest(2,5);
+        friendshipService.acceptFriendRequest(2, 3);
+        friendshipService.acceptFriendRequest(2, 5);
 
         friendshipService.sendFriendRequest(3, 5);
         friendshipService.acceptFriendRequest(3, 5);
 
-        assertTrue(friendshipService.getCommonFriends(1,6).isEmpty());
+        assertTrue(friendshipService.getCommonFriends(1, 6).isEmpty());
 
         assertEquals(friendshipService.getUserStorage().getUser(3),
-                friendshipService.getCommonFriends(1,2)
+                friendshipService.getCommonFriends(1, 2)
                         .stream().toList().getFirst());
         assertEquals(friendshipService.getUserStorage().getUser(3),
-                friendshipService.getCommonFriends(2,1)
+                friendshipService.getCommonFriends(2, 1)
                         .stream().toList().getFirst());
 
-        assertEquals(2, friendshipService.getCommonFriends(2,3).size());
+        assertEquals(2, friendshipService.getCommonFriends(2, 3).size());
     }
 }
