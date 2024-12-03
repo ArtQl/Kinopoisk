@@ -1,9 +1,11 @@
-package ru.artq.practice.kinopoisk.storage;
+package ru.artq.practice.kinopoisk.storage.inmemory;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
+import ru.artq.practice.kinopoisk.exception.ReviewNotExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.model.Review;
+import ru.artq.practice.kinopoisk.storage.ReviewStorage;
 
 import java.util.*;
 
@@ -27,12 +29,19 @@ public class InMemoryReviewStorage implements ReviewStorage {
 
     @Override
     public void removeReviewOfFilm(Integer filmId, Integer userId) {
-//        reviews.remove()
+        Set<Review> filmReviews = reviews.get(filmId);
+        if (filmReviews == null)
+            throw new ReviewNotExistException("Review not found");
+        filmReviews.removeIf(review -> review.getUserId().equals(userId));
+        if (filmReviews.isEmpty()) reviews.remove(filmId);
     }
 
     @Override
     public void updateReviewOfFilm(Integer filmId, Integer userId, String review) {
-
+        if (reviews.get(filmId) == null)
+            throw new ReviewNotExistException("Review not found");
+        reviews.get(filmId).removeIf(rev -> rev.getUserId().equals(userId));
+        reviews.get(filmId).add(new Review(setId(), filmId, userId, review));
     }
 
     @Override

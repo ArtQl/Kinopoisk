@@ -12,4 +12,6 @@ public interface LikeStorage {
     Collection<Integer> getUserLikes(Integer userId);
 
     Collection<Integer> getFilmLikes(Integer filmId);
+
+    Collection<Integer> getMutualFilms(Integer userId, Integer otherUserId);
 }

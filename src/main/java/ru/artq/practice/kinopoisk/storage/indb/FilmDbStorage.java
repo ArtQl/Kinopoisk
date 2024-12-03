@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -104,6 +105,13 @@ public class FilmDbStorage implements FilmStorage {
             throw new FilmNotExistException("Films no added");
         }
         return films;
+    }
+
+    @Override
+    public Collection<Film> findFilm(String query) {
+        String regex = ".*" + Pattern.quote(query) + ".*";
+        String sql = "SELECT * FROM FILMS WHERE REGEXP_LIKE(NAME, ?, 'i') OR REGEXP_LIKE(DESCRIPTION, ?, 'i')";
+        return jdbcTemplate.query(sql, new FilmRowMapper(), regex, regex);
     }
 
     private boolean doesFilmExistById(Integer id) {

@@ -53,8 +53,7 @@ public class FriendshipServiceImpl implements FriendshipService {
     public Collection<User> getCommonFriends(Integer userId, Integer otherId) {
         validateUsers(userId, otherId);
         Collection<Integer> res = friendshipStorage.getCommonFriends(userId, otherId);
-        if (res.isEmpty()) return List.of();
-        return res.stream().map(userStorage::getUser).toList();
+        return res.isEmpty() ? List.of() : res.stream().map(userStorage::getUser).toList();
     }
 
     private void validateUsers(Integer userId, Integer friendId) {

@@ -15,4 +15,5 @@ public interface LikeFilmService {
 
     Collection<Integer> getFilmLikes(Integer filmId);
 
+    Collection<Film> getMutualFilms(Integer userId, Integer otherUserId);
 }

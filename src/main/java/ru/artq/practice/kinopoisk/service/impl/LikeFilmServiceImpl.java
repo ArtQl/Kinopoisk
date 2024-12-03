@@ -2,7 +2,6 @@ package ru.artq.practice.kinopoisk.service.impl;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.service.LikeFilmService;
@@ -11,10 +10,11 @@ import ru.artq.practice.kinopoisk.storage.LikeStorage;
 import ru.artq.practice.kinopoisk.storage.UserStorage;
 
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @Getter
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor
 public class LikeFilmServiceImpl implements LikeFilmService {
     private final LikeStorage likeStorage;
     private final UserStorage userStorage;
@@ -50,5 +50,13 @@ public class LikeFilmServiceImpl implements LikeFilmService {
     public Collection<Integer> getFilmLikes(Integer filmId) {
         filmStorage.getFilm(filmId);
         return likeStorage.getFilmLikes(filmId);
+    }
+
+    @Override
+    public Collection<Film> getMutualFilms(Integer userId, Integer otherUserId) {
+        userStorage.getUser(userId);
+        userStorage.getUser(otherUserId);
+        Collection<Integer> res = likeStorage.getMutualFilms(otherUserId, userId);
+        return res.isEmpty() ? List.of() : res.stream().map(filmStorage::getFilm).toList();
     }
 }

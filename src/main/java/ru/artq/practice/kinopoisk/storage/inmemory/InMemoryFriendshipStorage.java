@@ -80,7 +80,7 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
                         ? f.getFriendId() : f.getUserId())
                 .collect(Collectors.toSet());
         userSet.retainAll(otherUserSet);
-        return List.copyOf(userSet);
+        return userSet;
     }
 
     private boolean existsFriendship(Integer userID, Integer friendId) {

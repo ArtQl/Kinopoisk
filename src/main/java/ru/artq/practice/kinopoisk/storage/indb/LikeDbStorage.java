@@ -59,6 +59,15 @@ public class LikeDbStorage implements LikeStorage {
         return List.of();
     }
 
+    @Override
+    public Collection<Integer> getMutualFilms(Integer userId, Integer otherUserId) {
+        String sql = "SELECT FILM_ID FROM LIKES WHERE USER_ID = ?";
+        List<Integer> filmsUser = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("FILM_ID"), userId);
+        List<Integer> filmsOther = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("FILM_ID"), otherUserId);
+        filmsUser.retainAll(filmsOther);
+        return filmsUser;
+    }
+
     private Boolean doesLikeExist(Integer filmId, Integer userId) {
         String sql = "SELECT COUNT(*) FROM LIKES WHERE FILM_ID = ? AND USER_ID = ?";
         return Optional.ofNullable(jdbcTemplate

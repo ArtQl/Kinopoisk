@@ -9,16 +9,21 @@ import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
 @Profile("in-memory")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
-    private Integer id = 0;
+    private Integer id;
 
     private Integer setId() {
+        if (films.isEmpty()) id = 0;
         return ++id;
     }
 
@@ -68,5 +73,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Collection<Film> getTopFilmByYear(Integer year) {
         return films.values().stream()
                 .filter(film -> year.equals(film.getReleaseDate().getYear())).toList();
+    }
+
+    @Override
+    public Collection<Film> findFilm(String query) {
+        Pattern pattern = Pattern.compile(".*" + Pattern.quote(query) + ".*", Pattern.CASE_INSENSITIVE);
+        return films.values().stream()
+                .filter(film -> pattern.matcher(film.getName()).find()
+                || pattern.matcher(film.getDescription()).find()).toList();
     }
 }
