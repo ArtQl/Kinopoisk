@@ -28,4 +28,10 @@ public class LikeController {
     public Collection<Film> getPopularFilms(@RequestParam(defaultValue = "10") Integer count) {
         return likeFilmService.getPopularFilms(count);
     }
+
+    @GetMapping("/mutual")
+    public Collection<Film> getMutualFilms(@RequestParam Integer userId,
+                                           @RequestParam Integer otherUserId) {
+        return likeFilmService.getMutualFilms(userId, otherUserId);
+    }
 }

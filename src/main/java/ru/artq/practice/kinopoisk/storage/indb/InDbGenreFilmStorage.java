@@ -55,6 +55,13 @@ public class InDbGenreFilmStorage implements GenreFilmStorage {
         return jdbcTemplate.update(sql, filmId, getGenreId(genre)) > 0;
     }
 
+    @Override
+    public Collection<Integer> getTopFilmByGenre(Genre genre) {
+        String sql = "SELECT FILM_ID FROM FILM_GENRE WHERE GENRE_ID = ?";
+        return jdbcTemplate.query(sql,
+                (rs, rowNum) -> rs.getInt("FILM_ID"), getGenreId(genre));
+    }
+
     private Boolean hasGenre(Integer filmId, Genre genre) {
         String sql = """
                 SELECT COUNT(*) FROM FILM_GENRE

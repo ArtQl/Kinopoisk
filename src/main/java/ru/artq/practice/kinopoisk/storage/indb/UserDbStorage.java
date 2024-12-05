@@ -110,6 +110,14 @@ public class UserDbStorage implements UserStorage {
         }
     }
 
+    @Override
+    public void clear() {
+        String sql = "SELECT COUNT(*) as res FROM USERS";
+        Integer res = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("res"));
+        if (res != null && res > 0)
+            jdbcTemplate.execute("DELETE FROM USERS WHERE ID > 0; ALTER TABLE USERS ALTER COLUMN ID RESTART WITH 1");
+    }
+
     private Boolean doesUserExistById(Integer id) {
         String sql = "SELECT COUNT(*) FROM USERS WHERE ID = ?";
         return Optional.ofNullable(jdbcTemplate

@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
@@ -96,9 +97,34 @@ public class FilmDbStorage implements FilmStorage {
         }
     }
 
+    @Override
+    public Collection<Film> getTopFilmByYear(Integer year) {
+        Collection<Film> films = getFilms().stream().filter(film -> year.equals(film.getReleaseDate().getYear())).toList();
+        if (films.isEmpty()) {
+            log.debug("Films no");
+            throw new FilmNotExistException("Films no added");
+        }
+        return films;
+    }
+
+    @Override
+    public Collection<Film> findFilm(String query) {
+        String regex = ".*" + Pattern.quote(query) + ".*";
+        String sql = "SELECT * FROM FILMS WHERE REGEXP_LIKE(NAME, ?, 'i') OR REGEXP_LIKE(DESCRIPTION, ?, 'i')";
+        return jdbcTemplate.query(sql, new FilmRowMapper(), regex, regex);
+    }
+
     private boolean doesFilmExistById(Integer id) {
         return Optional.ofNullable(jdbcTemplate
                         .queryForObject("SELECT COUNT(*) FROM FILMS WHERE ID = ?", Integer.class, id))
                 .orElse(0) > 0;
+    }
+
+    @Override
+    public void clear() {
+        String sql = "SELECT COUNT(*) as res FROM FILMS";
+        Integer res = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("res"));
+        if (res != null && res > 0)
+            jdbcTemplate.execute("DELETE FROM FILMS WHERE ID > 0; ALTER TABLE FILMS ALTER COLUMN ID RESTART WITH 1");
     }
 }

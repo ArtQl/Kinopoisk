@@ -68,4 +68,9 @@ public class InMemoryUserStorage implements UserStorage {
     public User getUser(Integer id) {
         return Optional.ofNullable(users.get(id)).orElseThrow(() -> new UserNotExistException("User with id: " + id + " not found"));
     }
+
+    @Override
+    public void clear() {
+        if(!users.isEmpty()) users.clear();
+    }
 }

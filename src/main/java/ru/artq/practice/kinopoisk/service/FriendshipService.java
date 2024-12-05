@@ -6,11 +6,11 @@ import java.util.Collection;
 
 public interface FriendshipService {
 
-    Boolean sendFriendRequest(Integer userId, Integer friendId);
+    void sendFriendRequest(Integer userId, Integer friendId);
 
-    Boolean acceptFriendRequest(Integer userId, Integer friendId);
+    void acceptFriendRequest(Integer userId, Integer friendId);
 
-    Boolean rejectFriendRequest(Integer userId, Integer friendId);
+    void rejectFriendRequest(Integer userId, Integer friendId);
 
     Collection<User> getFriends(Integer userId);
 

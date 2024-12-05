@@ -37,4 +37,9 @@ public class InMemoryGenreFilmStorage implements GenreFilmStorage {
         }
         return genreFilm.get(filmId).remove(genre);
     }
+
+    @Override
+    public Collection<Integer> getTopFilmByGenre(Genre genre) {
+        return genreFilm.entrySet().stream().filter(film -> film.getValue().contains(genre)).map(Map.Entry::getKey).toList();
+    }
 }

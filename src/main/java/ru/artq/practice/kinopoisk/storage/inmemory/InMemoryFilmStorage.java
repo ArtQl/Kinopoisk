@@ -13,25 +13,27 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Component
 @Profile("in-memory")
 public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Integer, Film> films = new HashMap<>();
-    private Integer id = 0;
+    private Integer id;
 
     private Integer setId() {
+        if (films.isEmpty()) id = 0;
         return ++id;
     }
 
     @Override
     public Film addFilm(Film film) {
-        if (films.containsValue(film)) {
+        if (films.containsKey(film.getId())) {
             log.debug("Film: {} already exist", film.getName());
             throw new FilmAlreadyExistException("Film already exist");
         }
-        if (films.containsKey(film.getId()) || film.getId() != null) {
+        if (film.getId() != null) {
             log.debug("ID Film: {} already exist", film.getId());
             throw new InvalidFilmIdException("ID Film already exist");
         }
@@ -65,5 +67,24 @@ public class InMemoryFilmStorage implements FilmStorage {
     public Film getFilm(Integer id) {
         return Optional.ofNullable(films.get(id))
                 .orElseThrow(() -> new FilmNotExistException("Film doesn't exist"));
+    }
+
+    @Override
+    public Collection<Film> getTopFilmByYear(Integer year) {
+        return films.values().stream()
+                .filter(film -> year.equals(film.getReleaseDate().getYear())).toList();
+    }
+
+    @Override
+    public Collection<Film> findFilm(String query) {
+        Pattern pattern = Pattern.compile(".*" + Pattern.quote(query) + ".*", Pattern.CASE_INSENSITIVE);
+        return films.values().stream()
+                .filter(film -> pattern.matcher(film.getName()).find()
+                || pattern.matcher(film.getDescription()).find()).toList();
+    }
+
+    @Override
+    public void clear() {
+        if(!films.isEmpty()) films.clear();
     }
 }

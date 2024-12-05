@@ -1,6 +1,7 @@
 package ru.artq.practice.kinopoisk.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
@@ -11,6 +12,7 @@ import ru.artq.practice.kinopoisk.model.User;
 
 import java.time.LocalDate;
 
+@Service
 @Slf4j
 public class ValidationService {
 

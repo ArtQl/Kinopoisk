@@ -10,6 +10,7 @@ import ru.artq.practice.kinopoisk.service.FilmService;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
 
 import java.util.Collection;
+import java.util.Collections;
 
 @Slf4j
 @Getter
@@ -38,5 +39,12 @@ public class FilmServiceImpl implements FilmService {
     @Override
     public Film getFilmById(Integer id) {
         return filmStorage.getFilm(id);
+    }
+
+    @Override
+    public Collection<Film> findFilm(String query) {
+        if (query == null || query.isBlank())
+            return Collections.emptyList();
+        return filmStorage.findFilm(query);
     }
 }

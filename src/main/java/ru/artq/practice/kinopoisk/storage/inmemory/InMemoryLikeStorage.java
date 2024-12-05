@@ -54,4 +54,12 @@ public class InMemoryLikeStorage implements LikeStorage {
         //todo
         return List.of();
     }
+
+    @Override
+    public Collection<Integer> getMutualFilms(Integer userId, Integer otherUserId) {
+        Set<Integer> userFilm = userLikes.getOrDefault(userId, new HashSet<>());
+        Set<Integer> otherFilm = userLikes.getOrDefault(otherUserId, new HashSet<>());
+        userFilm.retainAll(otherFilm);
+        return userFilm;
+    }
 }
