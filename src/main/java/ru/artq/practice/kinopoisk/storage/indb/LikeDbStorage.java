@@ -25,13 +25,6 @@ public class LikeDbStorage implements LikeStorage {
     }
 
     @Override
-    public Collection<Integer> getUserLikes(Integer userId) {
-        String sql = "SELECT * FROM LIKES WHERE USER_ID = ?";
-        List<Integer> res = jdbcTemplate.query(sql, rowMapper, userId);
-        return res.isEmpty() ? Collections.emptyList() : res;
-    }
-
-    @Override
     public Boolean likeFilm(Integer userId, Integer filmId) {
         if (doesLikeExist(filmId, userId))
             throw new LikeFilmException("User has already rated the movie");
@@ -54,16 +47,23 @@ public class LikeDbStorage implements LikeStorage {
     }
 
     @Override
-    public Collection<Integer> getFilmLikes(Integer filmId) {
-        //todo
-        return List.of();
+    public Collection<Integer> getUserLikes(Integer userId) {
+        String sql = "SELECT FILM_ID FROM LIKES WHERE USER_ID = ?";
+        List<Integer> res = jdbcTemplate.query(sql, rowMapper, userId);
+        return res.isEmpty() ? Collections.emptyList() : res;
     }
 
     @Override
-    public Collection<Integer> getMutualFilms(Integer userId, Integer otherUserId) {
-        String sql = "SELECT FILM_ID FROM LIKES WHERE USER_ID = ?";
-        List<Integer> filmsUser = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("FILM_ID"), userId);
-        List<Integer> filmsOther = jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("FILM_ID"), otherUserId);
+    public Collection<Integer> getFilmLikes(Integer filmId) {
+        String sql = "SELECT USER_ID FROM LIKES WHERE FILM_ID = ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("USER_ID"), filmId);
+    }
+
+    @Override
+    public Collection<Integer> getCommonFilms(Integer userId, Integer friendId) {
+        String sql = "SELECT FILM_ID FROM LIKES WHERE USER_ID = ? GROUP BY FILM_ID ORDER BY COUNT(USER_ID)";
+        List<Integer> filmsUser = jdbcTemplate.query(sql, rowMapper, userId);
+        List<Integer> filmsOther = jdbcTemplate.query(sql, rowMapper, friendId);
         filmsUser.retainAll(filmsOther);
         return filmsUser;
     }

@@ -53,10 +53,10 @@ public class LikeFilmServiceImpl implements LikeFilmService {
     }
 
     @Override
-    public Collection<Film> getMutualFilms(Integer userId, Integer otherUserId) {
+    public Collection<Film> getCommonFilms(Integer userId, Integer otherUserId) {
         userStorage.getUser(userId);
         userStorage.getUser(otherUserId);
-        Collection<Integer> res = likeStorage.getMutualFilms(otherUserId, userId);
+        Collection<Integer> res = likeStorage.getCommonFilms(otherUserId, userId);
         return res.isEmpty() ? List.of() : res.stream().map(filmStorage::getFilm).toList();
     }
 }

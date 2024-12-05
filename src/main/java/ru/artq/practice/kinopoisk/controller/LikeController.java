@@ -29,9 +29,9 @@ public class LikeController {
         return likeFilmService.getPopularFilms(count);
     }
 
-    @GetMapping("/mutual")
-    public Collection<Film> getMutualFilms(@RequestParam Integer userId,
-                                           @RequestParam Integer otherUserId) {
-        return likeFilmService.getMutualFilms(userId, otherUserId);
+    @GetMapping("/common")
+    public Collection<Film> getCommonFilms(@RequestParam Integer userId,
+                                           @RequestParam Integer friendId) {
+        return likeFilmService.getCommonFilms(userId, friendId);
     }
 }

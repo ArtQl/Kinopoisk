@@ -6,38 +6,34 @@ import ru.artq.practice.kinopoisk.exception.films.LikeFilmException;
 import ru.artq.practice.kinopoisk.storage.LikeStorage;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
 @Profile("in-memory")
 public class InMemoryLikeStorage implements LikeStorage {
-    private final Map<Integer, Set<Integer>> userLikes = new HashMap<>();
+    private final Map<Integer, Set<Integer>> likes = new HashMap<>();
 
     @Override
     public Boolean likeFilm(Integer userId, Integer filmId) {
-        userLikes.putIfAbsent(userId, new HashSet<>());
-        if (userLikes.get(userId).contains(filmId))
+        likes.putIfAbsent(filmId, new HashSet<>());
+        if (likes.get(filmId).contains(userId))
             throw new LikeFilmException("User has already rated the movie");
         else
-            return userLikes.get(userId).add(filmId);
+            return likes.get(filmId).add(userId);
     }
 
     @Override
     public Boolean unlikeFilm(Integer userId, Integer filmId) {
-        if (userLikes.get(userId) == null || !userLikes.get(userId).contains(filmId))
+        if (likes.get(filmId) == null || !likes.get(filmId).contains(userId))
             throw new LikeFilmException("User have yet to rate the movie");
-        else
-            return userLikes.get(userId).remove(filmId);
+        return likes.get(filmId).remove(userId);
     }
 
     @Override
     public Collection<Integer> getPopularFilms(Integer count) {
-        if (userLikes.isEmpty()) return List.of();
-        return userLikes.values()
-                .stream()
-                .flatMap(Set::stream)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+        if (likes.isEmpty()) return List.of();
+        return likes.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, i -> i.getValue().size()))
                 .entrySet().stream()
                 .sorted((i1, i2) -> Long.compare(i2.getValue(), i1.getValue()))
                 .map(Map.Entry::getKey)
@@ -46,19 +42,21 @@ public class InMemoryLikeStorage implements LikeStorage {
 
     @Override
     public Collection<Integer> getUserLikes(Integer userId) {
-        return Optional.ofNullable(userLikes.get(userId)).orElse(Set.of());
+        return likes.entrySet().stream()
+                .filter(film -> film.getValue().contains(userId))
+                .sorted((o1, o2) -> Integer.compare(o2.getValue().size(), o1.getValue().size()))
+                .map(Map.Entry::getKey).toList();
     }
 
     @Override
     public Collection<Integer> getFilmLikes(Integer filmId) {
-        //todo
-        return List.of();
+        return likes.get(filmId);
     }
 
     @Override
-    public Collection<Integer> getMutualFilms(Integer userId, Integer otherUserId) {
-        Set<Integer> userFilm = userLikes.getOrDefault(userId, new HashSet<>());
-        Set<Integer> otherFilm = userLikes.getOrDefault(otherUserId, new HashSet<>());
+    public Collection<Integer> getCommonFilms(Integer userId, Integer friendId) {
+        Collection<Integer> userFilm = getUserLikes(userId);
+        Collection<Integer> otherFilm = getUserLikes(friendId);
         userFilm.retainAll(otherFilm);
         return userFilm;
     }
