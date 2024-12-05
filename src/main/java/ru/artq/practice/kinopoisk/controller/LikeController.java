@@ -29,6 +29,16 @@ public class LikeController {
         return likeFilmService.getPopularFilms(count);
     }
 
+    @GetMapping
+    public Collection<Integer> getUserLikes(Integer userId) {
+        return likeFilmService.getUserLikes(userId);
+    }
+
+    @GetMapping
+    public Collection<Integer> getFilmLikes(Integer filmId) {
+        return likeFilmService.getFilmLikes(filmId);
+    }
+
     @GetMapping("/common")
     public Collection<Film> getCommonFilms(@RequestParam Integer userId,
                                            @RequestParam Integer friendId) {
