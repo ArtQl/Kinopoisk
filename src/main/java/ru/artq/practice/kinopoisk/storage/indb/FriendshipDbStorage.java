@@ -32,35 +32,32 @@ public class FriendshipDbStorage implements FriendshipStorage {
     }
 
     @Override
-    public Boolean sendFriendRequest(Integer userId, Integer friendId) {
+    public void sendFriendRequest(Integer userId, Integer friendId) {
         if (existsFriendship(userId, friendId) || existsFriendship(friendId, userId)) {
             log.info("Friend request already exists or users are already friends.");
-            return false;
+            throw new FriendshipException("Friend request already exists or users are already friends.");
         }
         String sql = "INSERT INTO FRIENDS (USER_ID, FRIEND_ID, STATUS) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, userId, friendId, FriendshipStatus.PENDING.name());
         log.info("Friend request sent from {} to {}", userId, friendId);
-        return true;
     }
 
     @Override
-    public Boolean acceptFriendRequest(int userId, int friendId) {
+    public void acceptFriendRequest(int userId, int friendId) {
         String sql = "UPDATE FRIENDS SET STATUS = ? WHERE USER_ID = ? AND FRIEND_ID = ?";
         int rowsUpdated = jdbcTemplate.update(sql, FriendshipStatus.ACCEPTED.name(), userId, friendId);
         if (rowsUpdated == 0)
             throw new FriendshipException("No pending friend request found.");
         log.info("{} ID and {} ID are now friends!", userId, friendId);
-        return true;
     }
 
     @Override
-    public Boolean rejectFriendRequest(int userId, int friendId) {
+    public void rejectFriendRequest(int userId, int friendId) {
         String sql = "UPDATE FRIENDS SET STATUS = ? WHERE USER_ID = ? AND FRIEND_ID = ?";
         int rowsDeleted = jdbcTemplate.update(sql, FriendshipStatus.REJECTED.name(), userId, friendId);
         if (rowsDeleted == 0)
             throw new FriendshipException("No pending friend request found.");
         log.info("{} ID request to {} ID was rejected.", userId, friendId);
-        return true;
     }
 
     @Override
@@ -75,6 +72,14 @@ public class FriendshipDbStorage implements FriendshipStorage {
         List<Friendship> f = jdbcTemplate.query(sql, rowMapper, userId, friendId);
         if (f.isEmpty()) throw new FriendshipException("Friendship not found");
         return f.getFirst();
+    }
+
+    @Override
+    public void clear() {
+        String sql = "SELECT COUNT(*) as res FROM FRIENDS";
+        Integer res = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("res"));
+        if (res != null && res > 0)
+            jdbcTemplate.execute("DELETE FROM FRIENDS WHERE USER_ID > 0");
     }
 
     @Override

@@ -18,7 +18,7 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
     private final Map<Integer, Set<Friendship>> friendships = new HashMap<>();
 
     @Override
-    public Boolean sendFriendRequest(Integer userId, Integer friendId) {
+    public void sendFriendRequest(Integer userId, Integer friendId) {
         Friendship fUser = new Friendship(userId, friendId);
         friendships.putIfAbsent(userId, new HashSet<>());
         friendships.putIfAbsent(friendId, new HashSet<>());
@@ -26,32 +26,29 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
         if (existsFriendship(userId, friendId)
                 || existsFriendship(friendId, userId)) {
             log.info("Users are already friends or have a pending request");
-            return false;
+            throw new FriendshipException("Users are already friends or have a pending request");
         }
         friendships.get(userId).add(fUser);
         friendships.get(friendId).add(fUser);
         log.info("Friend request sent from {} to {}", userId, friendId);
-        return true;
     }
 
     @Override
-    public Boolean acceptFriendRequest(int userId, int friendId) {
+    public void acceptFriendRequest(int userId, int friendId) {
         Friendship friendship = findFriendship(userId, friendId);
         if (friendship.getStatus() != FriendshipStatus.PENDING)
-            throw new IllegalArgumentException("No pending friend request found.");
+            throw new FriendshipException("No pending friend request found.");
         friendship.accept();
         log.info("{} ID and {} ID are now friends!", friendship.getUserId(), friendship.getFriendId());
-        return true;
     }
 
     @Override
-    public Boolean rejectFriendRequest(int userId, int friendId) {
+    public void rejectFriendRequest(int userId, int friendId) {
         Friendship friendship = findFriendship(userId, friendId);
         if (friendship.getStatus() != FriendshipStatus.PENDING)
-            throw new IllegalArgumentException("No pending friend request found.");
+            throw new FriendshipException("No pending friend request found.");
         friendship.reject();
         log.info("{} ID request to {} ID was rejected.", friendship.getUserId(), friendship.getFriendId());
-        return true;
     }
 
     @Override
@@ -67,6 +64,11 @@ public class InMemoryFriendshipStorage implements FriendshipStorage {
                 .stream()
                 .filter(f -> f.getFriendId().equals(friendId))
                 .findFirst().orElseThrow(() -> new FriendshipException("Friendship not found"));
+    }
+
+    @Override
+    public void clear() {
+        if(!friendships.isEmpty()) friendships.clear();
     }
 
     @Override

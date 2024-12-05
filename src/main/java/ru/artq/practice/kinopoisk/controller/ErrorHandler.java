@@ -7,6 +7,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.artq.practice.kinopoisk.exception.ReviewIdExistException;
 import ru.artq.practice.kinopoisk.exception.ValidationException;
 import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
@@ -33,6 +34,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({
+            ReviewIdExistException.class,
             InvalidFilmIdException.class,
             FilmNotExistException.class,
             UserNotExistException.class,

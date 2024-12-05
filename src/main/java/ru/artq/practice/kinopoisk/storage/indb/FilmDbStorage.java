@@ -119,4 +119,12 @@ public class FilmDbStorage implements FilmStorage {
                         .queryForObject("SELECT COUNT(*) FROM FILMS WHERE ID = ?", Integer.class, id))
                 .orElse(0) > 0;
     }
+
+    @Override
+    public void clear() {
+        String sql = "SELECT COUNT(*) as res FROM FILMS";
+        Integer res = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("res"));
+        if (res != null && res > 0)
+            jdbcTemplate.execute("DELETE FROM FILMS WHERE ID > 0; ALTER TABLE FILMS ALTER COLUMN ID RESTART WITH 1");
+    }
 }

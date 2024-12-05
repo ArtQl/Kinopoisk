@@ -1,8 +1,6 @@
 package ru.artq.practice.kinopoisk.service.impl;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Friendship;
 import ru.artq.practice.kinopoisk.model.User;
@@ -14,28 +12,27 @@ import java.util.Collection;
 import java.util.List;
 
 @Service
-@Getter
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor
 public class FriendshipServiceImpl implements FriendshipService {
     private final UserStorage userStorage;
     private final FriendshipStorage friendshipStorage;
 
     @Override
-    public Boolean sendFriendRequest(Integer userId, Integer friendId) {
+    public void sendFriendRequest(Integer userId, Integer friendId) {
         validateUsers(userId, friendId);
-        return friendshipStorage.sendFriendRequest(userId, friendId);
+        friendshipStorage.sendFriendRequest(userId, friendId);
     }
 
     @Override
-    public Boolean acceptFriendRequest(Integer userId, Integer friendId) {
+    public void acceptFriendRequest(Integer userId, Integer friendId) {
         validateUsers(userId, friendId);
-        return friendshipStorage.acceptFriendRequest(userId, friendId);
+        friendshipStorage.acceptFriendRequest(userId, friendId);
     }
 
     @Override
-    public Boolean rejectFriendRequest(Integer userId, Integer friendId) {
+    public void rejectFriendRequest(Integer userId, Integer friendId) {
         validateUsers(userId, friendId);
-        return friendshipStorage.rejectFriendRequest(userId, friendId);
+        friendshipStorage.rejectFriendRequest(userId, friendId);
     }
 
     @Override

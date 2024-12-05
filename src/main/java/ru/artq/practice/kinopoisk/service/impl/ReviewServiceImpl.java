@@ -2,7 +2,6 @@ package ru.artq.practice.kinopoisk.service.impl;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Review;
 import ru.artq.practice.kinopoisk.service.ReviewService;
@@ -13,43 +12,72 @@ import ru.artq.practice.kinopoisk.storage.UserStorage;
 import java.util.Collection;
 
 @Service
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor
 @Getter
 public class ReviewServiceImpl implements ReviewService {
-    UserStorage userStorage;
-    FilmStorage filmStorage;
-    ReviewStorage reviewStorage;
+    private final UserStorage userStorage;
+    private final FilmStorage filmStorage;
+    private final ReviewStorage reviewStorage;
 
     @Override
-    public void addReviewOfFilm(Integer filmId, Integer userId, String review) {
-        userStorage.getUser(userId);
-        filmStorage.getFilm(filmId);
-        reviewStorage.addReviewOfFilm(filmId, userId, review);
+    public Review addReview(Review review) {
+        userStorage.getUser(review.getUserId());
+        filmStorage.getFilm(review.getFilmId());
+        return reviewStorage.addReview(review);
     }
 
     @Override
-    public void removeReviewOfFilm(Integer filmId, Integer userId) {
-        userStorage.getUser(userId);
-        filmStorage.getFilm(filmId);
-        reviewStorage.removeReviewOfFilm(filmId, userId);
+    public Review removeReview(Integer id) {
+        return reviewStorage.removeReview(id);
     }
 
     @Override
-    public void updateReviewOfFilm(Integer filmId, Integer userId, String review) {
-        userStorage.getUser(userId);
-        filmStorage.getFilm(filmId);
-        reviewStorage.updateReviewOfFilm(filmId, userId, review);
+    public Review updateReview(Review review) {
+        userStorage.getUser(review.getUserId());
+        filmStorage.getFilm(review.getFilmId());
+        return reviewStorage.updateReview(review);
     }
 
     @Override
-    public Collection<Review> getAllReviewsOfFilm(Integer filmId) {
+    public Collection<Review> getReviewsOfFilm(Integer filmId, Integer count) {
+        if (filmId == 0) return reviewStorage.getAllReviews(count);
         filmStorage.getFilm(filmId);
-        return reviewStorage.getAllReviewsOfFilm(filmId);
+        return reviewStorage.getAllReviewsOfFilm(filmId, count);
     }
 
     @Override
-    public Collection<Review> getAllReviewsOfUser(Integer userId) {
+    public Collection<Review> getReviewsOfUser(Integer userId, Integer count) {
+        if (userId == 0) return reviewStorage.getAllReviews(count);
         userStorage.getUser(userId);
-        return reviewStorage.getAllReviewsOfUser(userId);
+        return reviewStorage.getAllReviewsOfUser(userId, count);
+    }
+
+    @Override
+    public Review getReviewById(Integer id) {
+        return reviewStorage.getReviewById(id);
+    }
+
+    @Override
+    public Boolean likeReview(Integer id, Integer userId) {
+        userStorage.getUser(userId);
+        return reviewStorage.likeReview(id, userId);
+    }
+
+    @Override
+    public Boolean dislikeReview(Integer id, Integer userId) {
+        userStorage.getUser(userId);
+        return reviewStorage.dislikeReview(id, userId);
+    }
+
+    @Override
+    public Boolean removeLikeReview(Integer id, Integer userId) {
+        userStorage.getUser(userId);
+        return reviewStorage.removeLikeReview(id, userId);
+    }
+
+    @Override
+    public Boolean removeDislikeReview(Integer id, Integer userId) {
+        userStorage.getUser(userId);
+        return reviewStorage.removeDislikeReview(id, userId);
     }
 }

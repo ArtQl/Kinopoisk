@@ -16,4 +16,6 @@ public interface FilmStorage {
     Collection<Film> getTopFilmByYear(Integer year);
 
     Collection<Film> findFilm(String query);
+
+    void clear();
 }

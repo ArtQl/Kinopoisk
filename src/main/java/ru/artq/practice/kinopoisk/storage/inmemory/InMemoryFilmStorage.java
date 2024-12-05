@@ -29,11 +29,11 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film addFilm(Film film) {
-        if (films.containsValue(film)) {
+        if (films.containsKey(film.getId())) {
             log.debug("Film: {} already exist", film.getName());
             throw new FilmAlreadyExistException("Film already exist");
         }
-        if (films.containsKey(film.getId()) || film.getId() != null) {
+        if (film.getId() != null) {
             log.debug("ID Film: {} already exist", film.getId());
             throw new InvalidFilmIdException("ID Film already exist");
         }
@@ -81,5 +81,10 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.values().stream()
                 .filter(film -> pattern.matcher(film.getName()).find()
                 || pattern.matcher(film.getDescription()).find()).toList();
+    }
+
+    @Override
+    public void clear() {
+        if(!films.isEmpty()) films.clear();
     }
 }

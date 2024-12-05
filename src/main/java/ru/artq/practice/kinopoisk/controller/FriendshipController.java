@@ -20,18 +20,18 @@ public class FriendshipController {
     }
 
     @PostMapping("/{id}/friends/{friendId}")
-    public Boolean sendFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
-        return friendshipService.sendFriendRequest(id, friendId);
+    public void sendFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
+        friendshipService.sendFriendRequest(id, friendId);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public Boolean acceptFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
-        return friendshipService.acceptFriendRequest(id, friendId);
+    public void acceptFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
+        friendshipService.acceptFriendRequest(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public Boolean rejectFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
-        return friendshipService.rejectFriendRequest(id, friendId);
+    public void rejectFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
+        friendshipService.rejectFriendRequest(id, friendId);
     }
 
     @GetMapping("/{id}/friends/{otherId}/mutual/")
