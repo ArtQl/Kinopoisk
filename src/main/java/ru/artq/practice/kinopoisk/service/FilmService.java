@@ -13,5 +13,14 @@ public interface FilmService {
 
     Film getFilmById(Integer id);
 
-    Collection<Film> findFilm(String query);
+    Collection<Film> search(String query);
+
+    Boolean likeFilm(Integer userId, Integer filmId);
+
+    Boolean unlikeFilm(Integer userId, Integer filmId);
+
+    Collection<Film> getPopularFilms(Integer count);
+
+    Collection<Integer> getFilmLikes(Integer filmId);
+
 }

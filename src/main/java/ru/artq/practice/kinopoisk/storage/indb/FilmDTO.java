@@ -24,14 +24,14 @@ import java.util.regex.Pattern;
 @Slf4j
 @Component
 @Profile("db")
-public class FilmDbStorage implements FilmStorage {
+public class FilmDTO implements FilmStorage {
     private final JdbcTemplate jdbcTemplate;
-    private final SimpleJdbcInsert simpleJdbcInsert;
+    private final SimpleJdbcInsert jdbcInsert;
 
     @Autowired
-    public FilmDbStorage(JdbcTemplate jdbcTemplate) {
+    public FilmDTO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.simpleJdbcInsert = new SimpleJdbcInsert(this.jdbcTemplate)
+        this.jdbcInsert = new SimpleJdbcInsert(this.jdbcTemplate)
                 .withTableName("FILMS")
                 .usingGeneratedKeyColumns("ID");
     }
@@ -46,8 +46,7 @@ public class FilmDbStorage implements FilmStorage {
             log.debug("ID Film: {} already exist", film.getId());
             throw new InvalidFilmIdException("ID Film already exist");
         }
-
-        Number id = simpleJdbcInsert.executeAndReturnKey(Map.of(
+        Number id = jdbcInsert.executeAndReturnKey(Map.of(
                 "NAME", film.getName(),
                 "DESCRIPTION", film.getDescription(),
                 "RELEASE_DATE", Date.valueOf(film.getReleaseDate()),
@@ -99,12 +98,36 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public Collection<Film> getTopFilmByYear(Integer year) {
-        Collection<Film> films = getFilms().stream().filter(film -> year.equals(film.getReleaseDate().getYear())).toList();
+        String sql = "SELECT * FROM FILMS WHERE YEAR(RELEASE_DATE) = ?";
+        Collection<Film> films = jdbcTemplate.query(sql, new FilmRowMapper(), year);
         if (films.isEmpty()) {
-            log.debug("Films no");
-            throw new FilmNotExistException("Films no added");
+            log.debug("No films found for the year {}", year);
+            throw new FilmNotExistException("No films found for the specified year: " + year);
         }
         return films;
+    }
+
+    @Override
+    public Collection<Film> getTopFilmByGenre(String genre) {
+        String sql = """
+                SELECT FILMS.* FROM FILMS
+                JOIN FILM_GENRE ON FILMS.ID = FILM_GENRE.FILM_ID
+                WHERE GENRE_ID = ?
+                """;
+        return jdbcTemplate.query(sql, new FilmRowMapper(), genre);
+    }
+
+    @Override
+    public Collection<Film> getFilmsDirector(Integer directorId, String sortBy) {
+        String sql = """
+                SELECT FILMS.* FROM FILMS
+                JOIN FILM_DIRECTOR ON FILMS.ID = FILM_DIRECTOR.FILM_ID
+                JOIN LIKES ON FILMS.ID = LIKES.FILM_ID
+                WHERE DIRECTOR_ID = ?
+                """;
+        if (sortBy.equals("likes")) sql += " ORDER BY COUNT(USER_ID) DESC";
+        else sql += " ORDER BY FILMS.RELEASE_DATE DESC";
+        return jdbcTemplate.query(sql, new FilmRowMapper(), directorId);
     }
 
     @Override
@@ -114,17 +137,17 @@ public class FilmDbStorage implements FilmStorage {
         return jdbcTemplate.query(sql, new FilmRowMapper(), regex, regex);
     }
 
-    private boolean doesFilmExistById(Integer id) {
-        return Optional.ofNullable(jdbcTemplate
-                        .queryForObject("SELECT COUNT(*) FROM FILMS WHERE ID = ?", Integer.class, id))
-                .orElse(0) > 0;
-    }
-
     @Override
     public void clear() {
         String sql = "SELECT COUNT(*) as res FROM FILMS";
         Integer res = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("res"));
         if (res != null && res > 0)
             jdbcTemplate.execute("DELETE FROM FILMS WHERE ID > 0; ALTER TABLE FILMS ALTER COLUMN ID RESTART WITH 1");
+    }
+
+    private boolean doesFilmExistById(Integer id) {
+        return Optional.ofNullable(jdbcTemplate
+                        .queryForObject("SELECT COUNT(*) FROM FILMS WHERE ID = ?", Integer.class, id))
+                .orElse(0) > 0;
     }
 }

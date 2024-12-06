@@ -35,8 +35,31 @@ public class FilmController {
         return filmService.getFilmById(id);
     }
 
+    @PostMapping("/{id}/likes/{userId}")
+    public Boolean likeFilm(@PathVariable Integer id,
+                            @PathVariable Integer userId) {
+        return filmService.likeFilm(userId, id);
+    }
+
+    @DeleteMapping("/{id}/likes/{userId}")
+    public Boolean unlikeFilm(@PathVariable Integer id,
+                              @PathVariable Integer userId) {
+        return filmService.unlikeFilm(userId, id);
+    }
+
+    @GetMapping("/popular")
+    public Collection<Film> getPopularFilms(
+            @RequestParam(defaultValue = "10") Integer count) {
+        return filmService.getPopularFilms(count);
+    }
+
+    @GetMapping("/{filmId}/likes")
+    public Collection<Integer> getFilmLikes(@PathVariable Integer filmId) {
+        return filmService.getFilmLikes(filmId);
+    }
+
     @GetMapping("/search")
-    public Collection<Film> findFilm(@RequestParam @NotBlank String query) {
-        return filmService.findFilm(query);
+    public Collection<Film> search(@RequestParam @NotBlank String query) {
+        return filmService.search(query);
     }
 }

@@ -1,12 +1,12 @@
 package ru.artq.practice.kinopoisk.service;
 
-import java.util.Collection;
+import ru.artq.practice.kinopoisk.model.Film;
+
+import java.util.Set;
 
 public interface GenreFilmService {
 
-    Collection<String> getAllGenreFilm(Integer filmId);
+    void addGenresToFilm(Film film);
 
-    Boolean addGenreToFilm(Integer filmId, String genre);
-
-    Boolean removeGenreFromFilm(Integer filmId, String genre);
+    Set<Integer> getGenresFilm(Integer filmId);
 }

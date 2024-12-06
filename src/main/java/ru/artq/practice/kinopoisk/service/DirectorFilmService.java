@@ -4,24 +4,12 @@ import ru.artq.practice.kinopoisk.model.Director;
 import ru.artq.practice.kinopoisk.model.Film;
 
 import java.util.Collection;
+import java.util.Set;
 
 public interface DirectorFilmService {
 
-    Director addDirector(Director director);
+    void addDirectorToFilm(Film film);
 
-    Director updateDirector(Director director);
+    Set<Integer> getDirectorsFilm(Integer filmId);
 
-    Boolean deleteDirector(Integer directorId);
-
-    Collection<Director> getDirectors();
-
-    Director getDirector(Integer directorId);
-
-    void addDirectorToFilm(Integer filmId, Integer directorId);
-
-    void updateDirectorToFilm(Integer filmId, Integer directorId);
-
-    void deleteDirectorToFilm(Integer filmId, Integer directorId);
-
-    Collection<Film> getFilmsOfDirector(Integer directorId);
 }

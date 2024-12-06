@@ -4,35 +4,34 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.model.Genre;
+import ru.artq.practice.kinopoisk.service.AbstractService;
 import ru.artq.practice.kinopoisk.service.GenreFilmService;
-import ru.artq.practice.kinopoisk.storage.FilmStorage;
+import ru.artq.practice.kinopoisk.storage.AbstractEntityStorage;
 import ru.artq.practice.kinopoisk.storage.GenreFilmStorage;
 
 import java.util.Collection;
+import java.util.Set;
 
 @Service
 @Getter
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
-public class GenreFilmServiceImpl implements GenreFilmService {
-    private final GenreFilmStorage genreFilmStorage;
-    private final FilmStorage filmStorage;
-
-    @Override
-    public Collection<String> getAllGenreFilm(Integer filmId) {
-        filmStorage.getFilm(filmId);
-        return genreFilmStorage.getAllGenreFilm(filmId).stream().map(Genre::name).toList();
+public class GenreFilmServiceImpl extends AbstractService<Genre> implements GenreFilmService {
+    private final GenreFilmStorage genreStorage;
+    @Autowired
+    public GenreFilmServiceImpl(AbstractEntityStorage<Genre> storage, GenreFilmStorage genreStorage) {
+        super(storage);
+        this.genreStorage = genreStorage;
     }
 
     @Override
-    public Boolean addGenreToFilm(Integer filmId, String genre) {
-        filmStorage.getFilm(filmId);
-        return genreFilmStorage.addGenreToFilm(filmId, ValidationService.validateGenre(genre));
+    public void addGenresToFilm(Film film) {
+        if (film.getGenres().isEmpty()) return;
+        genreStorage.addGenresToFilm(film);
     }
 
     @Override
-    public Boolean removeGenreFromFilm(Integer filmId, String genre) {
-        filmStorage.getFilm(filmId);
-        return genreFilmStorage.removeGenreFromFilm(filmId, ValidationService.validateGenre(genre));
+    public Set<Integer> getGenresFilm(Integer filmId) {
+        return genreStorage.getGenresFilm(filmId);
     }
 }

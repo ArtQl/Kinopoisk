@@ -18,7 +18,7 @@ import java.util.Optional;
 @Slf4j
 @Component
 @Profile("db")
-public class FriendshipDbStorage implements FriendshipStorage {
+public class FriendshipDTO implements FriendshipStorage {
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Friendship> rowMapper = ((rs, rowNum) -> new Friendship(
             rs.getInt("USER_ID"),
@@ -27,7 +27,7 @@ public class FriendshipDbStorage implements FriendshipStorage {
     );
 
     @Autowired
-    public FriendshipDbStorage(JdbcTemplate jdbcTemplate) {
+    public FriendshipDTO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

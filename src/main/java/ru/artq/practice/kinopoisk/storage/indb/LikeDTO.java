@@ -15,12 +15,12 @@ import java.util.Optional;
 
 @Component
 @Profile("db")
-public class LikeDbStorage implements LikeStorage {
+public class LikeDTO implements LikeStorage {
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Integer> rowMapper = (rs, rowNum) -> rs.getInt("FILM_ID");
 
     @Autowired
-    public LikeDbStorage(JdbcTemplate jdbcTemplate) {
+    public LikeDTO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 

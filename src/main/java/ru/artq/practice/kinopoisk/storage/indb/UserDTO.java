@@ -12,19 +12,21 @@ import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
+import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.model.User;
 import ru.artq.practice.kinopoisk.storage.UserStorage;
 
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
 @Component
 @Profile("db")
-public class UserDbStorage implements UserStorage {
+public class UserDTO implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert simpleJdbcInsert;
     private final RowMapper<User> rowMapper = (rs, rowNum) -> {
@@ -42,7 +44,7 @@ public class UserDbStorage implements UserStorage {
     };
 
     @Autowired
-    public UserDbStorage(JdbcTemplate jdbcTemplate) {
+    public UserDTO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
         this.simpleJdbcInsert = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("USERS")
@@ -116,6 +118,12 @@ public class UserDbStorage implements UserStorage {
         Integer res = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> rs.getInt("res"));
         if (res != null && res > 0)
             jdbcTemplate.execute("DELETE FROM USERS WHERE ID > 0; ALTER TABLE USERS ALTER COLUMN ID RESTART WITH 1");
+    }
+
+    @Override
+    public Collection<Film> recommendations(Integer id) {
+        String sql = "";
+        return List.of();
     }
 
     private Boolean doesUserExistById(Integer id) {

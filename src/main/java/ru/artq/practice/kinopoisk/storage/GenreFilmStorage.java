@@ -1,16 +1,14 @@
 package ru.artq.practice.kinopoisk.storage;
 
+import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.model.Genre;
 
 import java.util.Collection;
+import java.util.Set;
 
 public interface GenreFilmStorage {
 
-    Collection<Genre> getAllGenreFilm(Integer filmId);
+    void addGenresToFilm(Film film);
 
-    Boolean addGenreToFilm(Integer filmId, Genre genre);
-
-    Boolean removeGenreFromFilm(Integer filmId, Genre genre);
-
-    Collection<Integer> getTopFilmByGenre(Genre genre);
+    Set<Integer> getGenresFilm(Integer filmId);
 }

@@ -33,15 +33,15 @@ public class ReviewController {
         return reviewService.getReviewById(id);
     }
 
-    @GetMapping
+    @GetMapping("/film")
     public Collection<Review> getReviewsOfFilm(
             @RequestParam(defaultValue = "0") Integer filmId,
             @RequestParam(defaultValue = "10") Integer count) {
         return reviewService.getReviewsOfFilm(filmId, count);
     }
 
-    @GetMapping
-    Collection<Review> getReviewsOfUser(
+    @GetMapping("/user")
+    public Collection<Review> getReviewsOfUser(
             @RequestParam Integer userId,
             @RequestParam(defaultValue = "10") Integer count) {
         return reviewService.getReviewsOfUser(userId, count);
