@@ -41,9 +41,9 @@ public class UserController {
         return userService.recommendations(id);
     }
 
-    @GetMapping("/likes/{userId}")
-    public Collection<Integer> getUserLikes(@PathVariable Integer userId) {
-        return userService.getUserLikes(userId);
+    @GetMapping("/{id}/likes")
+    public Collection<Integer> getUserLikes(@PathVariable Integer id) {
+        return userService.getUserLikes(id);
     }
 
     @GetMapping("/{id}/friends")
@@ -52,34 +52,37 @@ public class UserController {
     }
 
     @PostMapping("/{id}/friends/{friendId}")
-    public void sendFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
+    public void sendFriendRequest(@PathVariable Integer id,
+                                  @PathVariable Integer friendId) {
         userService.sendFriendRequest(id, friendId);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public void acceptFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
+    public void acceptFriendRequest(@PathVariable Integer id,
+                                    @PathVariable Integer friendId) {
         userService.acceptFriendRequest(id, friendId);
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public void rejectFriendRequest(@PathVariable Integer id, @PathVariable Integer friendId) {
+    public void rejectFriendRequest(@PathVariable Integer id,
+                                    @PathVariable Integer friendId) {
         userService.rejectFriendRequest(id, friendId);
     }
 
-    @GetMapping("/{userId}/friends/common/{friendId}/friends")
-    public Collection<User> getCommonFriends(@PathVariable Integer userId, @PathVariable Integer friendId) {
-        return userService.getCommonFriends(userId, friendId);
+    @GetMapping("/{id}/friends/{friendId}/common-friends")
+    public Collection<User> getCommonFriends(@PathVariable Integer id,
+                                             @PathVariable Integer friendId) {
+        return userService.getCommonFriends(id, friendId);
     }
 
-    @GetMapping("/{userId}/friends/common/{friendId}/films")
-    public Collection<Film> getCommonFilms(@PathVariable Integer userId,
+    @GetMapping("/{id}/friends/{friendId}/common-films")
+    public Collection<Film> getCommonFilms(@PathVariable Integer id,
                                            @PathVariable Integer friendId) {
-        return userService.getCommonFilms(userId, friendId);
+        return userService.getCommonFilms(id, friendId);
     }
 
     @GetMapping("/{id}/feed")
     public Collection<Event> getEventsUser(@PathVariable Integer id) {
-        //todo
-        return null;
+        return userService.getEventsUser(id);
     }
 }

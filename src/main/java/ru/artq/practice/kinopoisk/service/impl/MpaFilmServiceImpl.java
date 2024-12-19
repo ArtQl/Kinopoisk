@@ -1,7 +1,6 @@
 package ru.artq.practice.kinopoisk.service.impl;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Film;
@@ -11,7 +10,6 @@ import ru.artq.practice.kinopoisk.service.MpaFilmService;
 import ru.artq.practice.kinopoisk.storage.AbstractEntityStorage;
 import ru.artq.practice.kinopoisk.storage.MpaFilmStorage;
 
-import java.util.Collection;
 import java.util.Set;
 
 @Service
@@ -27,7 +25,7 @@ public class MpaFilmServiceImpl extends AbstractService<Mpa> implements MpaFilmS
 
     @Override
     public void addMpaToFilm(Film film) {
-        if (film.getMpa().isEmpty()) return;
+        if (film.getMpa() == null || film.getMpa().isEmpty()) return;
         mpaFilmStorage.addMpaToFilm(film);
     }
 

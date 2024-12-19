@@ -8,7 +8,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.user.FriendshipException;
 import ru.artq.practice.kinopoisk.model.Friendship;
-import ru.artq.practice.kinopoisk.model.FriendshipStatus;
+import ru.artq.practice.kinopoisk.model.enums.FriendshipStatus;
 import ru.artq.practice.kinopoisk.storage.FriendshipStorage;
 
 import java.util.Collection;
@@ -64,6 +64,12 @@ public class FriendshipDTO implements FriendshipStorage {
     public Collection<Friendship> getFriendshipsById(Integer userId) {
         String sql = "SELECT * FROM FRIENDS WHERE (USER_ID = ? or FRIEND_ID = ?) AND STATUS = 'ACCEPTED'";
         return jdbcTemplate.query(sql, rowMapper, userId, userId);
+    }
+
+    @Override
+    public Collection<Friendship> getFriendships() {
+        var sql = "SELECT * FROM FRIENDS";
+        return jdbcTemplate.query(sql, rowMapper);
     }
 
     @Override

@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import ru.artq.practice.kinopoisk.model.enums.FriendshipStatus;
 
 @Getter
 @Setter

@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
 import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
-import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
+import ru.artq.practice.kinopoisk.exception.films.FilmIdException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
 import ru.artq.practice.kinopoisk.storage.indb.rowmapper.FilmRowMapper;
@@ -44,7 +44,7 @@ public class FilmDTO implements FilmStorage {
         }
         if (film.getId() != null) {
             log.debug("ID Film: {} already exist", film.getId());
-            throw new InvalidFilmIdException("ID Film already exist");
+            throw new FilmIdException("ID Film already exist");
         }
         Number id = jdbcInsert.executeAndReturnKey(Map.of(
                 "NAME", film.getName(),
@@ -61,7 +61,7 @@ public class FilmDTO implements FilmStorage {
     public Film updateFilm(Film film) {
         if (!doesFilmExistById(film.getId())) {
             log.debug("ID Film: {} doesn't exist", film.getId());
-            throw new InvalidFilmIdException("ID Film doesn't exist");
+            throw new FilmIdException("ID Film doesn't exist");
         }
         String sql = "UPDATE FILMS SET NAME = ?, DESCRIPTION = ?, RELEASE_DATE = ?, DURATION = ? WHERE ID = ?";
         jdbcTemplate.update(sql,
@@ -94,40 +94,6 @@ public class FilmDTO implements FilmStorage {
         } catch (DataAccessException e) {
             throw new RuntimeException("Error accessing the database for film with id: " + id, e);
         }
-    }
-
-    @Override
-    public Collection<Film> getTopFilmByYear(Integer year) {
-        String sql = "SELECT * FROM FILMS WHERE YEAR(RELEASE_DATE) = ?";
-        Collection<Film> films = jdbcTemplate.query(sql, new FilmRowMapper(), year);
-        if (films.isEmpty()) {
-            log.debug("No films found for the year {}", year);
-            throw new FilmNotExistException("No films found for the specified year: " + year);
-        }
-        return films;
-    }
-
-    @Override
-    public Collection<Film> getTopFilmByGenre(String genre) {
-        String sql = """
-                SELECT FILMS.* FROM FILMS
-                JOIN FILM_GENRE ON FILMS.ID = FILM_GENRE.FILM_ID
-                WHERE GENRE_ID = ?
-                """;
-        return jdbcTemplate.query(sql, new FilmRowMapper(), genre);
-    }
-
-    @Override
-    public Collection<Film> getFilmsDirector(Integer directorId, String sortBy) {
-        String sql = """
-                SELECT FILMS.* FROM FILMS
-                JOIN FILM_DIRECTOR ON FILMS.ID = FILM_DIRECTOR.FILM_ID
-                JOIN LIKES ON FILMS.ID = LIKES.FILM_ID
-                WHERE DIRECTOR_ID = ?
-                """;
-        if (sortBy.equals("likes")) sql += " ORDER BY COUNT(USER_ID) DESC";
-        else sql += " ORDER BY FILMS.RELEASE_DATE DESC";
-        return jdbcTemplate.query(sql, new FilmRowMapper(), directorId);
     }
 
     @Override

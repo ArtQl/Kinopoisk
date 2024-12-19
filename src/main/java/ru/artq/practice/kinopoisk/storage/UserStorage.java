@@ -17,4 +17,5 @@ public interface UserStorage {
     void clear();
 
     Collection<Film> recommendations(Integer id);
+
 }

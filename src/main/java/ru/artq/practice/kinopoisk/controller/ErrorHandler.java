@@ -1,27 +1,23 @@
 package ru.artq.practice.kinopoisk.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.artq.practice.kinopoisk.exception.ReviewIdExistException;
+import ru.artq.practice.kinopoisk.exception.ErrorResponse;
+import ru.artq.practice.kinopoisk.exception.films.*;
+import ru.artq.practice.kinopoisk.exception.review.ReviewIdExistException;
 import ru.artq.practice.kinopoisk.exception.ValidationException;
-import ru.artq.practice.kinopoisk.exception.films.FilmAlreadyExistException;
-import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
-import ru.artq.practice.kinopoisk.exception.films.InvalidFilmIdException;
-import ru.artq.practice.kinopoisk.exception.films.LikeFilmException;
+import ru.artq.practice.kinopoisk.exception.review.ReviewNotExistException;
 import ru.artq.practice.kinopoisk.exception.user.FriendshipException;
-import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
+import ru.artq.practice.kinopoisk.exception.user.UserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
-import ru.artq.practice.kinopoisk.model.ErrorResponse;
 
 import java.util.stream.Collectors;
 
-@Slf4j
 @RestControllerAdvice
 public class ErrorHandler {
 
@@ -34,11 +30,11 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({
-            ReviewIdExistException.class,
-            InvalidFilmIdException.class,
-            FilmNotExistException.class,
-            UserNotExistException.class,
-            InvalidUserIdException.class,
+            GenreIdException.class, GenreNotExistException.class,
+            MpaIdException.class, MpaNotExistException.class,
+            ReviewIdExistException.class, ReviewNotExistException.class,
+            FilmIdException.class, FilmNotExistException.class,
+            UserIdException.class, UserNotExistException.class
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
     private ErrorResponse handleNotExistException(RuntimeException e) {
@@ -65,10 +61,13 @@ public class ErrorHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
-        String errorMessage = ex.getBindingResult().getFieldErrors().stream()
-                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+        String errorMessage = ex.getBindingResult().getFieldErrors()
+                .stream()
+                .map(fieldError -> fieldError.getField() + ": "
+                        + fieldError.getDefaultMessage())
                 .collect(Collectors.joining(", "));
-        return ResponseEntity.badRequest().body("Validation error: " + errorMessage);
+        return ResponseEntity.badRequest()
+                .body("Validation error: " + errorMessage);
     }
 }
 

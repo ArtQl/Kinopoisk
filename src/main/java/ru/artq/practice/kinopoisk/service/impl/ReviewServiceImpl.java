@@ -4,7 +4,10 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Review;
+import ru.artq.practice.kinopoisk.model.enums.EventType;
+import ru.artq.practice.kinopoisk.model.enums.Operation;
 import ru.artq.practice.kinopoisk.service.ReviewService;
+import ru.artq.practice.kinopoisk.storage.EventStorage;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
 import ru.artq.practice.kinopoisk.storage.ReviewStorage;
 import ru.artq.practice.kinopoisk.storage.UserStorage;
@@ -18,24 +21,37 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserStorage userStorage;
     private final FilmStorage filmStorage;
     private final ReviewStorage reviewStorage;
+    private final EventStorage eventStorage;
 
     @Override
     public Review addReview(Review review) {
         userStorage.getUser(review.getUserId());
         filmStorage.getFilm(review.getFilmId());
-        return reviewStorage.addReview(review);
+        review = reviewStorage.addReview(review);
+        eventStorage.addEventToFeed(
+                review.getUserId(), review.getReviewId(),
+                EventType.REVIEW, Operation.ADD);
+        return review;
     }
 
     @Override
     public Review removeReview(Integer id) {
-        return reviewStorage.removeReview(id);
+        Review review = reviewStorage.removeReview(id);
+        eventStorage.addEventToFeed(
+                review.getUserId(), review.getReviewId(),
+                EventType.REVIEW, Operation.REMOVE);
+        return review;
     }
 
     @Override
     public Review updateReview(Review review) {
         userStorage.getUser(review.getUserId());
         filmStorage.getFilm(review.getFilmId());
-        return reviewStorage.updateReview(review);
+        review = reviewStorage.updateReview(review);
+        eventStorage.addEventToFeed(
+                review.getUserId(), review.getReviewId(),
+                EventType.REVIEW, Operation.UPDATE);
+        return review;
     }
 
     @Override

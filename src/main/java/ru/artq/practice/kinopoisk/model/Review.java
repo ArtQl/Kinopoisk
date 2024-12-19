@@ -1,5 +1,7 @@
 package ru.artq.practice.kinopoisk.model;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.util.Set;
@@ -12,37 +14,40 @@ import java.util.Set;
 public class Review {
     @EqualsAndHashCode.Include
     private Integer reviewId;
+    @NotNull
     private final Integer filmId;
+    @NotNull
     private final Integer userId;
+    @NotBlank
     private final String content;
     private final Boolean isPositive;
     private Integer useful = 0;
     private Set<Integer> usersLike;
     private Set<Integer> usersDislike;
 
-    public Boolean likeReview(Integer userId) {
-        if (usersLike.contains(userId)) return false;
+    public void likeReview(Integer userId) {
+        if (usersLike.contains(userId)) return;
         usersDislike.remove(userId);
         ++useful;
-        return usersLike.add(userId);
+        usersLike.add(userId);
 
     }
-    public Boolean dislikeReview(Integer userId) {
-        if (usersDislike.contains(userId)) return false;
+    public void dislikeReview(Integer userId) {
+        if (usersDislike.contains(userId)) return;
         usersLike.remove(userId);
         --useful;
-        return usersDislike.add(userId);
+        usersDislike.add(userId);
     }
 
-    public Boolean removeLike(Integer userId) {
-        if (!usersLike.contains(userId)) return false;
+    public void removeLike(Integer userId) {
+        if (!usersLike.contains(userId)) return;
         --useful;
-        return usersLike.remove(userId);
+        usersLike.remove(userId);
     }
 
-    public Boolean removeDislike(Integer userId) {
-        if (!usersDislike.contains(userId)) return false;
+    public void removeDislike(Integer userId) {
+        if (!usersDislike.contains(userId)) return;
         ++useful;
-        return usersDislike.remove(userId);
+        usersDislike.remove(userId);
     }
 }

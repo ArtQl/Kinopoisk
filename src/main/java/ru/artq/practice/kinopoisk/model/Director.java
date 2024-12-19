@@ -1,9 +1,7 @@
 package ru.artq.practice.kinopoisk.model;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
-
-import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @Data
 @AllArgsConstructor

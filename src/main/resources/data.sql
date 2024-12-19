@@ -87,6 +87,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MPA WHERE TITLE = 'NC_17');
 -- INSERT INTO FRIENDS (USER_ID, FRIEND_ID, STATUS)
 -- VALUES (3, 5, 'ACCEPTED');
 
+-----------------------------------
 
 -- SELECT DISTINCT USER_ID
 -- FROM FRIENDS
@@ -100,6 +101,7 @@ WHERE NOT EXISTS (SELECT 1 FROM MPA WHERE TITLE = 'NC_17');
 --   AND USER_ID IN (1, 2)
 --   AND FRIEND_ID NOT IN (1, 2);
 --
+---------------------------------------
 --
 -- SELECT USER_ID ID
 -- FROM FRIENDS

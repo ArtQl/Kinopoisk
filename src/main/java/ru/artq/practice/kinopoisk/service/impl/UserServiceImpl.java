@@ -4,14 +4,14 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.artq.practice.kinopoisk.model.Event;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.model.Friendship;
 import ru.artq.practice.kinopoisk.model.User;
+import ru.artq.practice.kinopoisk.model.enums.EventType;
+import ru.artq.practice.kinopoisk.model.enums.Operation;
 import ru.artq.practice.kinopoisk.service.UserService;
-import ru.artq.practice.kinopoisk.storage.FilmStorage;
-import ru.artq.practice.kinopoisk.storage.FriendshipStorage;
-import ru.artq.practice.kinopoisk.storage.LikeStorage;
-import ru.artq.practice.kinopoisk.storage.UserStorage;
+import ru.artq.practice.kinopoisk.storage.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -24,6 +24,7 @@ public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
     private final LikeStorage likeStorage;
     private final FilmStorage filmStorage;
+    private final EventStorage eventStorage;
     private final FriendshipStorage friendshipStorage;
 
     @Override
@@ -50,8 +51,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Collection<Film> recommendations(Integer id) {
-        //todo
-        getFriends(id);
         return userStorage.recommendations(id);
     }
 
@@ -80,12 +79,16 @@ public class UserServiceImpl implements UserService {
     public void acceptFriendRequest(Integer userId, Integer friendId) {
         validateUsers(userId, friendId);
         friendshipStorage.acceptFriendRequest(userId, friendId);
+        eventStorage.addEventToFeed(userId, friendId,
+                EventType.FRIEND, Operation.ADD);
     }
 
     @Override
     public void rejectFriendRequest(Integer userId, Integer friendId) {
         validateUsers(userId, friendId);
         friendshipStorage.rejectFriendRequest(userId, friendId);
+        eventStorage.addEventToFeed(userId, friendId,
+                EventType.FRIEND, Operation.REMOVE);
     }
 
     @Override
@@ -104,6 +107,11 @@ public class UserServiceImpl implements UserService {
         validateUsers(userId, otherId);
         Collection<Integer> res = friendshipStorage.getCommonFriends(userId, otherId);
         return res.isEmpty() ? List.of() : res.stream().map(userStorage::getUser).toList();
+    }
+
+    @Override
+    public Collection<Event> getEventsUser(Integer id) {
+        return eventStorage.getEventsUser(id);
     }
 
     private void validateUsers(Integer userId, Integer friendId) {

@@ -11,7 +11,7 @@ import java.util.Collection;
 @RequestMapping("/reviews")
 @RequiredArgsConstructor
 public class ReviewController {
-    ReviewService reviewService;
+    private final ReviewService reviewService;
 
     @PostMapping
     public Review addReviewOfFilm(@RequestBody Review review) {
@@ -35,9 +35,9 @@ public class ReviewController {
 
     @GetMapping("/film")
     public Collection<Review> getReviewsOfFilm(
-            @RequestParam(defaultValue = "0") Integer filmId,
+            @RequestParam(defaultValue = "0") Integer id,
             @RequestParam(defaultValue = "10") Integer count) {
-        return reviewService.getReviewsOfFilm(filmId, count);
+        return reviewService.getReviewsOfFilm(id, count);
     }
 
     @GetMapping("/user")

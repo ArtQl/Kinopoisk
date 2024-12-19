@@ -6,20 +6,19 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
-import ru.artq.practice.kinopoisk.exception.user.InvalidUserIdException;
+import ru.artq.practice.kinopoisk.exception.user.UserIdException;
 import ru.artq.practice.kinopoisk.exception.user.UserAlreadyExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.model.User;
 import ru.artq.practice.kinopoisk.storage.UserStorage;
+import ru.artq.practice.kinopoisk.storage.indb.rowmapper.FilmRowMapper;
+import ru.artq.practice.kinopoisk.storage.indb.rowmapper.UserRowMapper;
 
 import java.sql.Date;
-import java.sql.SQLException;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,19 +28,6 @@ import java.util.Optional;
 public class UserDTO implements UserStorage {
     private final JdbcTemplate jdbcTemplate;
     private final SimpleJdbcInsert simpleJdbcInsert;
-    private final RowMapper<User> rowMapper = (rs, rowNum) -> {
-        try {
-            return User.builder()
-                    .id(rs.getInt("ID"))
-                    .email(rs.getString("EMAIL"))
-                    .login(rs.getString("LOGIN"))
-                    .username(rs.getString("USERNAME"))
-                    .birthday(rs.getDate("BIRTHDAY").toLocalDate())
-                    .build();
-        } catch (SQLException e) {
-            throw new RuntimeException("Error mapping result set to User object", e);
-        }
-    };
 
     @Autowired
     public UserDTO(JdbcTemplate jdbcTemplate) {
@@ -59,7 +45,7 @@ public class UserDTO implements UserStorage {
         }
         if (user.getId() != null) {
             log.debug("{} ID user already exist", user.getId());
-            throw new InvalidUserIdException("ID user already exist");
+            throw new UserIdException("ID user already exist");
         }
         Number id = simpleJdbcInsert.executeAndReturnKey(Map.of(
                 "EMAIL", user.getEmail(),
@@ -76,7 +62,7 @@ public class UserDTO implements UserStorage {
     public User updateUser(User user) {
         if (!doesUserExistById(user.getId())) {
             log.debug("{} ID User doesn't exist", user.getId());
-            throw new InvalidUserIdException("ID User doesn't exist");
+            throw new UserIdException("ID User doesn't exist");
         }
         String sql = "UPDATE USERS SET EMAIL = ?, LOGIN = ?, USERNAME = ?, BIRTHDAY = ? WHERE ID = ?";
         jdbcTemplate.update(sql,
@@ -92,7 +78,7 @@ public class UserDTO implements UserStorage {
     public Collection<User> getUsers() {
         System.out.println("in db");
         String sql = "SELECT * FROM users ORDER BY ID";
-        Collection<User> users = jdbcTemplate.query(sql, rowMapper);
+        Collection<User> users = jdbcTemplate.query(sql, new UserRowMapper());
         if (users.isEmpty()) {
             log.debug("Users no added");
             throw new UserNotExistException("Users no added");
@@ -104,7 +90,7 @@ public class UserDTO implements UserStorage {
     public User getUser(Integer id) {
         try {
             String sql = "SELECT * FROM USERS WHERE ID = ?";
-            return jdbcTemplate.queryForObject(sql, rowMapper, id);
+            return jdbcTemplate.queryForObject(sql, new UserRowMapper(), id);
         } catch (IncorrectResultSizeDataAccessException e) {
             throw new UserNotExistException("User with id: " + id + " not found", e);
         } catch (DataAccessException e) {
@@ -122,8 +108,18 @@ public class UserDTO implements UserStorage {
 
     @Override
     public Collection<Film> recommendations(Integer id) {
-        String sql = "";
-        return List.of();
+        String sql = """
+                SELECT DISTINCT f.*
+                FROM LIKES l1
+                JOIN LIKES l2 ON l1.FILM_ID = l2.FILM_ID
+                JOIN FILMS f ON l2.FILM_ID = f.ID
+                WHERE l1.USER_ID = ?
+                  AND l2.USER_ID != ?
+                  AND l2.FILM_ID NOT IN (
+                    SELECT FILM_ID FROM LIKES WHERE USER_ID = ?
+                  );
+                """;
+        return jdbcTemplate.query(sql, new FilmRowMapper(), id, id, id);
     }
 
     private Boolean doesUserExistById(Integer id) {

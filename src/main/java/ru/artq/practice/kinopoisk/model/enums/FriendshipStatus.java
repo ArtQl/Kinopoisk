@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.model;
+package ru.artq.practice.kinopoisk.model.enums;
 
 public enum FriendshipStatus {
     PENDING,

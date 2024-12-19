@@ -1,4 +1,4 @@
-package ru.artq.practice.kinopoisk.exception;
+package ru.artq.practice.kinopoisk.exception.review;
 
 public class ReviewNotExistException extends RuntimeException {
     public ReviewNotExistException(String message) {

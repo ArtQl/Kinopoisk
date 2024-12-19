@@ -5,10 +5,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Film;
+import ru.artq.practice.kinopoisk.model.enums.EventType;
+import ru.artq.practice.kinopoisk.model.enums.Operation;
 import ru.artq.practice.kinopoisk.service.DirectorFilmService;
 import ru.artq.practice.kinopoisk.service.FilmService;
 import ru.artq.practice.kinopoisk.service.GenreFilmService;
 import ru.artq.practice.kinopoisk.service.MpaFilmService;
+import ru.artq.practice.kinopoisk.storage.EventStorage;
 import ru.artq.practice.kinopoisk.storage.FilmStorage;
 import ru.artq.practice.kinopoisk.storage.LikeStorage;
 import ru.artq.practice.kinopoisk.storage.UserStorage;
@@ -27,6 +30,7 @@ public class FilmServiceImpl implements FilmService {
     private final MpaFilmService mpaFilmService;
     private final LikeStorage likeStorage;
     private final UserStorage userStorage;
+    private final EventStorage eventStorage;
 
     @Override
     public Film addFilm(Film film) {
@@ -74,17 +78,23 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Boolean likeFilm(Integer userId, Integer filmId) {
+    public Boolean likeFilm(Integer filmId, Integer userId) {
         userStorage.getUser(userId);
         filmStorage.getFilm(filmId);
-        return likeStorage.likeFilm(userId, filmId);
+        Boolean res = likeStorage.likeFilm(userId, filmId);
+        if (res) eventStorage.addEventToFeed(userId, filmId,
+                    EventType.LIKE, Operation.ADD);
+        return res;
     }
 
     @Override
-    public Boolean unlikeFilm(Integer userId, Integer filmId) {
+    public Boolean unlikeFilm(Integer filmId, Integer userId) {
         userStorage.getUser(userId);
         filmStorage.getFilm(filmId);
-        return likeStorage.unlikeFilm(userId, filmId);
+        Boolean res = likeStorage.unlikeFilm(userId, filmId);
+        if (res) eventStorage.addEventToFeed(userId, filmId,
+                EventType.LIKE, Operation.REMOVE);
+        return res;
     }
 
     @Override

@@ -16,7 +16,7 @@ public class FilmController {
     private final FilmService filmService;
 
     @PostMapping
-    public Film addFilm(@Valid @RequestBody Film film) {
+    public Film addFilm(@RequestBody Film film) {
         return filmService.addFilm(film);
     }
 
@@ -38,13 +38,13 @@ public class FilmController {
     @PostMapping("/{id}/likes/{userId}")
     public Boolean likeFilm(@PathVariable Integer id,
                             @PathVariable Integer userId) {
-        return filmService.likeFilm(userId, id);
+        return filmService.likeFilm(id, userId);
     }
 
     @DeleteMapping("/{id}/likes/{userId}")
     public Boolean unlikeFilm(@PathVariable Integer id,
                               @PathVariable Integer userId) {
-        return filmService.unlikeFilm(userId, id);
+        return filmService.unlikeFilm(id, userId);
     }
 
     @GetMapping("/popular")
@@ -53,9 +53,9 @@ public class FilmController {
         return filmService.getPopularFilms(count);
     }
 
-    @GetMapping("/{filmId}/likes")
-    public Collection<Integer> getFilmLikes(@PathVariable Integer filmId) {
-        return filmService.getFilmLikes(filmId);
+    @GetMapping("/{id}/likes")
+    public Collection<Integer> getFilmLikes(@PathVariable Integer id) {
+        return filmService.getFilmLikes(id);
     }
 
     @GetMapping("/search")

@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Component;
-import ru.artq.practice.kinopoisk.exception.ReviewIdExistException;
+import ru.artq.practice.kinopoisk.exception.review.ReviewIdExistException;
 import ru.artq.practice.kinopoisk.exception.films.FilmNotExistException;
 import ru.artq.practice.kinopoisk.exception.user.UserNotExistException;
 import ru.artq.practice.kinopoisk.model.Review;
@@ -43,6 +43,7 @@ public class ReviewDTO implements ReviewStorage {
                 "USERS_LIKE", parseSet(review.getUsersLike()),
                 "USERS_DISLIKE", parseSet(review.getUsersDislike())
         ));
+
         review.setReviewId(id.intValue());
         return review;
     }

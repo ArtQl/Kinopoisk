@@ -13,6 +13,8 @@ public interface FriendshipStorage {
 
     Collection<Friendship> getFriendshipsById(Integer userId);
 
+    Collection<Friendship> getFriendships();
+
     Collection<Integer> getCommonFriends(Integer userId, Integer otherUserId);
 
     Friendship findFriendship(int userId, int friendId);

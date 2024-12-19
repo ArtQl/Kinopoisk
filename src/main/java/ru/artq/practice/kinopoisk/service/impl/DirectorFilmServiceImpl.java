@@ -9,10 +9,7 @@ import ru.artq.practice.kinopoisk.service.AbstractService;
 import ru.artq.practice.kinopoisk.service.DirectorFilmService;
 import ru.artq.practice.kinopoisk.storage.AbstractEntityStorage;
 import ru.artq.practice.kinopoisk.storage.DirectorStorage;
-import ru.artq.practice.kinopoisk.storage.FilmStorage;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Set;
 
 @Service
@@ -31,7 +28,7 @@ public class DirectorFilmServiceImpl
 
     @Override
     public void addDirectorToFilm(Film film) {
-        if (film.getDirectors().isEmpty()) return;
+        if (film.getDirectors() == null || film.getDirectors().isEmpty()) return;
         directorStorage.addDirectorToFilm(film);
     }
 

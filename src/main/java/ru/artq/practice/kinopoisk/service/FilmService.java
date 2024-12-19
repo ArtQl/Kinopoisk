@@ -15,9 +15,9 @@ public interface FilmService {
 
     Collection<Film> search(String query);
 
-    Boolean likeFilm(Integer userId, Integer filmId);
+    Boolean likeFilm(Integer filmId, Integer userId);
 
-    Boolean unlikeFilm(Integer userId, Integer filmId);
+    Boolean unlikeFilm(Integer filmId, Integer userId);
 
     Collection<Film> getPopularFilms(Integer count);
 

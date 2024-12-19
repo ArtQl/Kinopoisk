@@ -1,7 +1,6 @@
 package ru.artq.practice.kinopoisk.service.impl;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.artq.practice.kinopoisk.model.Film;
@@ -11,7 +10,6 @@ import ru.artq.practice.kinopoisk.service.GenreFilmService;
 import ru.artq.practice.kinopoisk.storage.AbstractEntityStorage;
 import ru.artq.practice.kinopoisk.storage.GenreFilmStorage;
 
-import java.util.Collection;
 import java.util.Set;
 
 @Service
@@ -26,7 +24,7 @@ public class GenreFilmServiceImpl extends AbstractService<Genre> implements Genr
 
     @Override
     public void addGenresToFilm(Film film) {
-        if (film.getGenres().isEmpty()) return;
+        if (film.getGenres() == null || film.getGenres().isEmpty()) return;
         genreStorage.addGenresToFilm(film);
     }
 

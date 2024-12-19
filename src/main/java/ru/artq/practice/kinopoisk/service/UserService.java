@@ -1,5 +1,6 @@
 package ru.artq.practice.kinopoisk.service;
 
+import ru.artq.practice.kinopoisk.model.Event;
 import ru.artq.practice.kinopoisk.model.Film;
 import ru.artq.practice.kinopoisk.model.User;
 
@@ -29,4 +30,6 @@ public interface UserService {
     Collection<User> getFriends(Integer userId);
 
     Collection<User> getCommonFriends(Integer userId, Integer otherId);
+
+    Collection<Event> getEventsUser(Integer id);
 }
