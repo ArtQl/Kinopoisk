@@ -2,6 +2,7 @@ pipeline {
     agent any
     tools {
         maven 'Maven3' // Указываем Maven из Global Tool Configuration
+        jdk 'JDK21'
     }
     stages {
         stage('Checkout') {
